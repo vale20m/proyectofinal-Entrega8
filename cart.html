@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>eMercado - Todo lo que busques está aquí</title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body class="bg-primary.bg-gradient">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav w-100 justify-content-between">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="categories.html">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell.html">Vender</a>
+          </li>
+          <li class="nav-item">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span id="profile"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="userDropdown" id="profile-options">
+                <a class="dropdown-item" href="cart.html">Mi carrito</a>
+                <a class="dropdown-item" href="my-profile.html">Mi perfil</a>
+                <a class="dropdown-item" href="wishlist.html">Lista de deseados</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="login.html" id="loginButton">Cerrar sesión</a>
+                <button class="dropdown-item" id="switchMode">Modo noche</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <h1 class="text-center m-4">Carrito de compras</h1>
+    <div class="container">
+      <div id="cartItems" class="list-group">
+        <!-- ITEMS DEL CARRITO -->
+      </div>
+    </div>
+    <div class="row mx-auto" id="cartControls">
+      <!-- CONTROLES DE TIPO DE ENVÍO Y DIRECCIÓN -->
+      <div class="col-lg-6 col-md-8 col-10 mx-sm-5 mx-4">
+        <h2>Tipo de envío</h2>
+        <form id="form">
+          <div class="mb-3">
+            <label for="shipType" class="form-label">Tipo de Envío:</label>
+            <select id="shipType" class="form-select" required>
+              <option value="premium">Premium 2 a 5 dias (15%)</option>
+              <option value="express">Express 5 a 8 dias (7%)</option>
+              <option value="standard">Standard 12 a 15 dias (5%)</option>
+            </select>
+          </div>
+          <h2>Dirección de envío</h2>
+          <div class="mb-3">
+            <label for="street" class="form-label">Calle:</label>
+            <input type="text" class="form-control" id="street" name="street" required pattern="[A-Za-z ]+">
+            <div class="invalid-feedback">Ingresa una calle válida</div>
+          </div>
+          <div class="mb-3">
+            <label for="number" class="form-label">Número:</label>
+            <input type="text" class="form-control" id="number" name="number" required pattern="[0-9]+">
+            <div class="invalid-feedback">Ingresa un número válido</div>
+          </div>
+          <div class="mb-5">
+            <label for="corner" class="form-label">Esquina:</label>
+            <input type="text" class="form-control" id="corner" name="corner" required pattern="[A-Za-z ]+">
+            <div class="invalid-feedback">Ingresa una esquina válida</div>
+          </div>
+          <hr>
+          <h2 class="mt-4">Costos</h2>
+          <div class="list-group mx-auto row mt-4">
+            <div class="border rounded mb-0 col-12 py-2 mx-auto row">
+              <div class="col-6">Subtotal</div>
+              <div class="col-6 text-end" id="cartSubtotal">USD 0</div>
+              <div class="col-12 text-muted">Costo unitario del producto por cantidad</div>
+            </div>
+            <div class="border rounded mb-0 col-12 py-2 mx-auto row">
+              <div class="col-6">Costo de envío</div>
+              <div class="col-6 text-end" id="shipCost">USD 0</div>
+              <div class="col-12 text-muted">Según el tipo de envío</div>
+            </div>
+            <div class="border rounded mb-5 col-12 py-2 mx-auto row">
+              <div class="col-6">Total ($)</div>
+              <div class="col-6 text-end fw-bold" id="cartTotal">USD 0</div>
+            </div>
+          </div>
+          <hr>
+          <h2 class="mt-4">Forma de pago</h2>
+
+          <!-- Forma de pago (parte del form) -->
+
+          <span id="selectionText">No ha seleccionado</span>
+          <a href="#" class="btn-link" data-bs-toggle="modal" data-bs-target="#paymentModal">Selecciona</a>
+          <br>
+          <span class="red-text" class="error-message" id="selectionText-error" hidden>Debe seleccionar una forma de pago</span>
+          <div id="cardNumber-error" class="red-text error-message" hidden>El número de tarjeta está incompleto</div>
+          <div id="cvv-error" class="red-text error-message" hidden>El código de seguridad está incompleto</div>
+          <div id="expirationDate-error" class="red-text error-message" hidden>La fecha de vencimiento está incompleta</div>
+          <div id="accountNumber-error" class="red-text error-message" hidden>El número de cuenta está incompleto</div>
+          <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="paymentModalLabel">Seleccionar forma de pago</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="mb-4">
+                      <input type="radio" id="creditCard" name="paymentMethod" value="credit_card">
+                      <label for="creditCard">Tarjeta de crédito</label>
+                      <div id="creditCardFields">
+                        <div class="my-3">
+                          <input type="text" class="form-control" id="creditCardNumber" placeholder="Número de tarjeta" minlength="16" maxlength="16" disabled pattern="[0-9]+">
+                          <div class="invalid-feedback">Número de tarjeta incompleto</div>
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="cvv" placeholder="Código de seguridad" minlength="3" maxlength="3" disabled pattern="[0-9]+">
+                          <div class="invalid-feedback">Código de seguridad incompleto</div>
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="expirationDate" placeholder="Fecha de vencimiento" minlength="5" maxlength="5" disabled>
+                          <div class="invalid-feedback">Fecha de vencimiento incompleto</div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                      <input type="radio" id="bankTransfer" name="paymentMethod" value="bank_transfer">
+                      <label for="bankTransfer">Transferencia bancaria</label>
+                      <div id="bankTransferFields">
+                        <div class="my-3">
+                          <input type="type" class="form-control" id="accountNumber" placeholder="Número de cuenta" disabled>
+                          <div class="invalid-feedback">Número de cuenta incompleto</div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <!-- Boton para realizar la compra -->
+
+          <button type="submit" id="confirmPurchase" class="fs-5 btn btn-primary w-100">Finalizar compra</button>
+          <div id="successBanner" class="alert alert-success d-none">
+            Compra realizada con éxito
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-end">
+        <a href="#">Volver arriba</a>
+      </p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+    </div>
+  </footer>
+  <div id="spinner-wrapper">
+    <div class="lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/cart.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>eMercado - Todo lo que busques está aquí</title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav w-100 justify-content-between">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="categories.html">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell.html">Vender</a>
+          </li>
+          <li class="nav-item">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span id="profile"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="userDropdown" id="profile-options">
+                <a class="dropdown-item" href="cart.html">Mi carrito</a>
+                <a class="dropdown-item" href="my-profile.html">Mi perfil</a>
+                <a class="dropdown-item" href="wishlist.html">Lista de deseados</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="login.html" id="loginButton">Cerrar sesión</a>
+                <button class="dropdown-item" id="switchMode">Modo noche</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main>
+  
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class=" col-lg-8 col-10 position-relative">
+          <form id="profile-form" class="needs-validation" novalidate>
+            <br><br>
+              <h1>Perfil</h1>
+              <div id="profileImageContainer" class="position-absolute top-0 end-0 mt-3 overflow-hidden">
+                <img id="shownPicture" class="w-100 h-100 object-fit-cover" src="img/defaultProfile.jpg">
+              </div>
+            <br>
+            <hr>
+            <div class="row">
+              <div class="col-sm-6">
+                <label for="name" class="mt-3">Nombre*</label>
+                <input type="text" class="form-control col-" id="name" minlength="1" pattern="[a-zA-Z]+" required>
+                <div class="invalid-feedback">
+                  Ingresa un nombre válido
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="secondName" class="mt-3">Segundo nombre</label>
+                <input type="text" class="form-control" id="secondName" pattern="[a-zA-Z]*">
+                <div class="invalid-feedback">
+                  Ingresa un segundo nombre válido
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <label for ="lastName" class="mt-3">Apellido*</label>
+                <input type="text" class="form-control" id="lastName" minlength="1" pattern="[a-zA-Z]+" required>
+                <div class="invalid-feedback">
+                  Ingresa un apellido válido
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="secondLastName" class="mt-3">Segundo apellido</label>
+                <input type="text" class="form-control" id="secondLastName" pattern="[a-zA-Z]*">
+                <div class="invalid-feedback">
+                  Ingresa un segundo apellido válido
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="email" class="mt-3">Correo electrónico*</label>
+                <input type="email" class="form-control" id="email" minlength="1" required>
+                <div class="invalid-feedback">
+                  Ingresa un email válido
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="profileImage" class="mt-3">Imagen de perfil</label>
+                <input type="file" class="form-control" id="profileImage">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="phone" class="mt-3">Teléfono de contacto</label>
+                <input type="tel" class="form-control" id="phone" minlength="9" pattern="[0-9]+">
+                <div class="invalid-feedback">
+                  Ingresa un teléfono válido
+                </div>
+              </div>
+            </div>
+            <br>
+            <hr>
+            <button id="submitButton" type="button" class="btn btn-primary mt-3 float-sm-start ms-sm-3">Guardar cambios</button>
+            <button type="button" class="btn btn-secondary mt-3 float-sm-end me-sm-3" data-bs-toggle="modal" data-bs-target="#cancelProfileChanges">Salir</button>
+            <div class="modal fade mt-5" id="cancelProfileChanges" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-4 mx-auto text-center">¿Seguro que quieres salir? <br> (se perderán los cambios no guardados)</h1>
+                  </div>
+                  <div class="modal-footer mb-5 position-relative">
+                    <a type="button" href="index.html" class="btn btn-primary position-absolute top-0 start-0 mt-3 ms-5">Salir</a>
+                    <button type="button" class="btn btn-secondary position-absolute top-0 end-0 mt-3 me-5" data-bs-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    
+  </main>
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-end">
+        <a href="#">Volver arriba</a>
+      </p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+    </div>
+  </footer>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/my-profile.js"></script>
+</body>
+
+</html>

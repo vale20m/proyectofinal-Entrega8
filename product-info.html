@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>eMercado - Todo lo que busques está aquí</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-1">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav w-100 justify-content-between">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="categories.html">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell.html">Vender</a>
+          </li>
+          <li class="nav-item">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span id="profile"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="userDropdown" id="profile-options">
+                <a class="dropdown-item" href="cart.html">Mi carrito</a>
+                <a class="dropdown-item" href="my-profile.html">Mi perfil</a>
+                <a class="dropdown-item" href="wishlist.html">Lista de deseados</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="login.html" id="loginButton">Cerrar sesión</a>
+                <button class="dropdown-item" id="switchMode">Modo noche</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main id="screen">
+    <div class="container" id="productInfo">
+    </div>
+
+    <!-- Carrusel de imágenes -->
+    
+    <div id="productImageCarousel" class="carousel slide mx-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- Aquí se agregarán las imágenes del producto -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+    <!-- Agregamos la funcionalidad de comentar y ver los comentarios de otros -->
+
+    <div class="container mx-2 mb-4">
+      <h1 class="mb-3 mt-5">Comentarios:</h1>
+      <div class="container shadow-sm bg-body p-1 rounded">
+        <div id="commentsContainer">
+
+          <!-- AQUI SE AGREGAN LOS COMENTARIOS DEL PRODUCTO -->
+
+        </div>
+      </div>
+    </div>
+    
+    <div class="container mx-2 my-2">
+      <label for="commentHeader" class="bold fs-1 my-3">Comentar:</label><br>
+      <label for="opinion" class="fst-italic fs-4 my-1">Tu opinión:</label><br>
+      <textarea id="opinion" class="form-control mb-3 mt-1" cols="35" rows="2" maxlength="75" required></textarea>
+      <label for="score" class="fst-italic fs-4 my-1">Tu puntuación:</label>
+      <select id="score" class="form-select w-25" required>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+      </select>
+    <div>
+      <div id="estrellas"></div>
+    </div>
+    <button type="submit" id="sendComment" class="btn btn-primary mb-5 mt-3">Enviar</button>
+    </div>
+
+    <hr>
+    <!-- Finaliza el codigo de los comentarios -->
+
+    <div class="container mx-2 mt-5 row" id="relatedProducts">
+      <h1>Productos relacionados: </h1>
+
+      <!-- Aquí agregamos los productos relacionados -->
+
+    </div>
+
+  </main>
+  <footer class="text-muted">
+    <div class="container">
+      <p class="float-end">
+        <a href="#">Volver arriba</a>
+      </p>
+      <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
+    </div>
+  </footer>
+  <div id="spinner-wrapper">
+    <div class="lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/product-info.js"></script>
+</body>
+
+</html>

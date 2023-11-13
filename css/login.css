@@ -1,0 +1,28 @@
+/* Agregados para la estética del menú login */
+
+img.login {
+    width: 15%;
+    width: 75px;
+}
+  
+h1#loginTitle{
+    text-shadow: 1px 1px 1px black;
+    font-size: 300%;
+}
+  
+div.container div.login{
+    background-color: rgb(208, 235, 255);
+    max-width: 600px;
+    min-width:max-content;
+}
+
+#login-img{
+    max-width: 750px;
+    border-style: outset;
+}
+
+@media (max-width: 359px){
+    #login-img{
+        display: none;
+    }
+}
