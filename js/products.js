@@ -5,8 +5,6 @@ los elementos extraidos de la API */
 
 let CategoryNum = localStorage.getItem("catID");
 
-let DATA_product = "https://japceibal.github.io/emercado-api/cats_products/" + CategoryNum + ".json";
-
 const container = document.getElementById("info");
 
 /* Entrega 3: Función para redireccionar al usuario a "product-info.html" una vez
@@ -97,7 +95,7 @@ async function getData (url){
   }
 }
 
-getData(DATA_product);
+getData(PRODUCTS_URL + CategoryNum + ".json");
 
 let filteredProducts = productsArray;
 

@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function(e){
     getJSONData(CATEGORIES_URL).then(function(resultObj){
         if (resultObj.status === "ok"){
             currentCategoriesArray = resultObj.data
-            showCategoriesList()
+            showCategoriesList();
             //sortAndShowCategories(ORDER_ASC_BY_NAME, resultObj.data);
         }
     });
