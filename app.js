@@ -54,3 +54,9 @@ app.get("/cart", (req, res) => {
 app.get("/sell", (req, res) => {
     res.json(require("./emercado-api/sell/publish.json"));
 });
+
+// Realizamos las peticiones de usuarios
+
+const userRouter = require("./routes/userRouter");
+
+app.use("/users", userRouter);

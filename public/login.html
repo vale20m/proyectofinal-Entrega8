@@ -25,7 +25,8 @@
         <h1 id="loginTitle" class="my-4">Inicio de sesión</h1>
         <img src="../img/login.png" id="login-img" class="w-100">
       </div>
-      <form action="index.html" method="post" id="form">
+
+      <form action="index.html" method="post" id="loginForm">
         <div class="container login w-75 border border-2 rounded border-dark">
           
           <div class="row">
@@ -39,7 +40,7 @@
 
           <div class="my-4 row">
             <img src="../img/password.png" class="login">
-            <input type="password" name="password" id="password" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required>
+            <input type="password" name="password" id="password" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]*" minlength="8">
           </div>
           
           <div class="mt-4 row">
@@ -47,11 +48,61 @@
           </div>
 
           <div class="m-4 row">
-            <button type="submit" value="send-login" class="btn btn-primary btn-lg btn-block">Iniciar sesión</button>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Iniciar sesión</button>
           </div>
 
         </div>
       </form>
+
+      <!-- Modal para crear una cuenta -->
+
+      <h4 class="my-3"><u>¿Aún no tienes una cuenta?</u></h4>
+
+      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#signInModal">Crea una</button>
+
+      <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-3" id="signInModalLabel">Crea una cuenta</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="signInForm">
+
+                <div class="my-4 row">
+                  <img src="../img/email.jpg" class="login">
+                  <input type="email" name="createEmail" id="createEmail" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su email" required>
+                </div>
+      
+                <div class="my-4 row">
+                  <img src="../img/password.png" class="login">
+                  <input type="password" name="createPassword1" id="createPassword1" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]" minlength="8">
+                </div>
+                
+                <div class="my-4 row">
+                  <img src="../img/password.png" class="login">
+                  <input type="password" name="createPassword2" id="createPassword2" class="w-75 form-control border-success justify-content-center" placeholder="Confirme su contraseña" required pattern="[A-Za-z0-9]" minlength="8">
+                </div>
+
+                <div class="mt-4 row">
+                  <label for="showCreatePassword"><input type="checkbox" name="showCreatePassword" id="showCreatePassword" class="form-check-input mx-2">Mostrar contraseña</label>
+                </div>
+
+                <div class="m-4 row">
+                  <button type="submit" class="btn btn-primary btn-lg btn-block">Crear cuenta</button>
+                </div>
+
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
   <footer class="text-muted">
@@ -62,6 +113,7 @@
       <p>Este sitio forma parte de <a href="https://jovenesaprogramar.edu.uy/" target="_blank">Jovenes a Programar</a></p>
     </div>
   </footer>
+  <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/login.js"></script>
 </body>
 

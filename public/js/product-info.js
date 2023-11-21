@@ -3,8 +3,6 @@
 
 const ProductNum = localStorage.getItem("productID");
 
-localStorage.removeItem("productID");
-
 // "Traemos" utilizando el DOM el div de id "productInfo" para colocar la información en él
 
 const container = document.getElementById("productInfo");
