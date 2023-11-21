@@ -19,9 +19,9 @@ app.listen(port, () => {
     console.log(`Servidor ejecutándose en http://localhost:${port}`);
 });
 
-app.get("/", (req, res) => {
-    res.send("<h1>Bienvenid@ al sistema!</h1>");
-});
+// app.get("/", (req, res) => {
+//     res.send("<h1>Bienvenid@ al sistema!</h1>");
+// });
 
 // Realizamos todas las operaciones
 
@@ -30,15 +30,15 @@ app.get("/cats", (req, res) => {
 });
 
 app.get("/cats_products/:catID", (req, res) => {
-    res.json(require(`./emercado-api/cats_products/${req.params.catID}/.json`));
+    res.json(require(`./emercado-api/cats_products/${req.params.catID}.json`));
 });
 
 app.get("/products/:productID", (req, res) => {
-    res.json(require(`./emercado-api/products/${req.params.productID}/.json`));
+    res.json(require(`./emercado-api/products/${req.params.productID}.json`));
 });
 
 app.get("/products_comments/:productID", (req, res) => {
-    res.json(require(`./emercado-api/products_comments/${req.params.productID}/.json`));
+    res.json(require(`./emercado-api/products_comments/${req.params.productID}.json`));
 });
 
 app.get("/user_cart", (req, res) => {
