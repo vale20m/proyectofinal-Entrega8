@@ -13,6 +13,8 @@ const port = 3000;
 
 app.use(express.json());
 
+app.use(express.static("public"));
+
 // Permitimos que el servidor reciba peticiones
 
 app.listen(port, () => {
