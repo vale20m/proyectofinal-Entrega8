@@ -59,4 +59,4 @@ app.get("/sell", (req, res) => {
 
 const userRouter = require("./routes/userRouter");
 
-app.use("/users", userRouter);
+app.use("/login", userRouter);

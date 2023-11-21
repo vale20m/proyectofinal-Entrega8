@@ -13,7 +13,7 @@ const getUsers = async (req, res) => {
 
 const getUserByEmail = async (req, res) => {
 
-    const user = await userModel.getUserByEmail(req.params.email);
+    const user = await userModel.getUserByEmail(req.params.email, req.params.password);
     res.json(user[0]);
 
 }
@@ -23,7 +23,7 @@ const getUserByEmail = async (req, res) => {
 const postUser = async (req, res) => {
 
     const user = await userModel.postUser(req.body);
-    res.json(user);
+    res.json(user[0]);
 
 }
 

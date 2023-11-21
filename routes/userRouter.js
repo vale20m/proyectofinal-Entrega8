@@ -6,7 +6,7 @@ const userRouter = express.Router();
 
 userRouter.get("/", userController.getUsers);
 
-userRouter.get("/:email", userController.getUserByEmail);
+userRouter.get("/:email/:password", userController.getUserByEmail);
 
 userRouter.post("/", userController.postUser);
 

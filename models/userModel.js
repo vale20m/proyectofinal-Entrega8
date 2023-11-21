@@ -41,7 +41,7 @@ const getUsers = async () => {
 
 // Funcion que retorna el elemento de la base de datos que coincide con ese email
 
-const getUserByEmail = async (email) => {
+const getUserByEmail = async (email, password) => {
 
     let conn;
     try {
@@ -54,6 +54,10 @@ const getUserByEmail = async (email) => {
 
         if (row.length == 0){
             return [{message: "No existe un usuario con ese email en el sistema"}];
+        }
+
+        if (row[0].password != password){
+            return [{message: "La contraseña ingresada no es correcta"}];
         }
 
         return row;

@@ -26,7 +26,7 @@
         <img src="../img/login.png" id="login-img" class="w-100">
       </div>
 
-      <form action="index.html" method="post" id="loginForm">
+      <form id="loginForm" novalidate>
         <div class="container login w-75 border border-2 rounded border-dark">
           
           <div class="row">
@@ -36,11 +36,17 @@
           <div class="my-4 row">
             <img src="../img/email.jpg" class="login">
             <input type="email" name="email" id="email" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su email" required>
+            <div class="invalid-feedback">
+              Ingrese un email válido.
+            </div>
           </div>
 
           <div class="my-4 row">
             <img src="../img/password.png" class="login">
-            <input type="password" name="password" id="password" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]*" minlength="8">
+            <input type="password" name="password" id="password" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]+" minlength="8">
+            <div class="invalid-feedback">
+              Ingrese una contraseña válida.
+            </div>
           </div>
           
           <div class="mt-4 row">
@@ -48,7 +54,7 @@
           </div>
 
           <div class="m-4 row">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Iniciar sesión</button>
+            <button type="submit" id="sendLogin" class="btn btn-primary btn-lg btn-block">Iniciar sesión</button>
           </div>
 
         </div>
@@ -58,31 +64,40 @@
 
       <h4 class="my-3"><u>¿Aún no tienes una cuenta?</u></h4>
 
-      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#signInModal">Crea una</button>
+      <button type="button" id="openModal" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#signInModal">Crea una</button>
 
       <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" id ="modalDialog">
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-3" id="signInModalLabel">Crea una cuenta</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form id="signInForm">
+              <form id="signInForm" novalidate>
 
                 <div class="my-4 row">
                   <img src="../img/email.jpg" class="login">
                   <input type="email" name="createEmail" id="createEmail" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su email" required>
+                  <div class="invalid-feedback">
+                    Ingrese un email válido.
+                  </div>
                 </div>
       
                 <div class="my-4 row">
                   <img src="../img/password.png" class="login">
-                  <input type="password" name="createPassword1" id="createPassword1" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]" minlength="8">
+                  <input type="password" name="createPassword1" id="createPassword1" class="w-75 form-control border-success justify-content-center" placeholder="Ingrese su contraseña" required pattern="[A-Za-z0-9]+" minlength="8">
+                  <div class="invalid-feedback">
+                    Ingrese una contraseña válida.
+                  </div>
                 </div>
                 
                 <div class="my-4 row">
                   <img src="../img/password.png" class="login">
-                  <input type="password" name="createPassword2" id="createPassword2" class="w-75 form-control border-success justify-content-center" placeholder="Confirme su contraseña" required pattern="[A-Za-z0-9]" minlength="8">
+                  <input type="password" name="createPassword2" id="createPassword2" class="w-75 form-control border-success justify-content-center" placeholder="Confirme su contraseña" required pattern="[A-Za-z0-9]+" minlength="8">
+                  <div class="invalid-feedback">
+                    Ingrese una contraseña igual a la anterior.
+                  </div>
                 </div>
 
                 <div class="mt-4 row">
@@ -96,8 +111,7 @@
               </form>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
           </div>
         </div>
