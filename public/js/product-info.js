@@ -3,10 +3,7 @@
 
 const ProductNum = localStorage.getItem("productID");
 
-const CAT_PRODUCTS = "https://japceibal.github.io/emercado-api/products/" + ProductNum + ".json";
-
-const CategoryNum = localStorage.getItem("catID");
-const DATA_PRODUCTS = "https://japceibal.github.io/emercado-api/cats_products/" + CategoryNum + ".json";
+localStorage.removeItem("productID");
 
 // "Traemos" utilizando el DOM el div de id "productInfo" para colocar la información en él
 
@@ -19,7 +16,7 @@ function showData(product) {
   <div class="row col-11 mx-auto"><h1 class="my-3 text-uppercase col-lg-8 col-md-7 col-12">${product.name}</h1>
   <div class="col-lg-1 col-md-2 col-3"><a role="button" id="wishlist" class="fs-1 btn mt-lg-0 mt-md-3">❤</a></div>
   <button id="buyProduct" type="button" class="btn btn-primary fs-3 col-md-3 col-9 my-auto">Comprar</button></div>
-  <div><a class="text-secondary" href="index.html">Inicio ></a><a class="text-secondary" href="categories.html">Categorías ></a><a class="text-secondary" href="products.html">${category}</a></div> <hr>
+  <div><a class="text-secondary" href="index.html">Inicio ></a><a class="text-secondary" href="categories.html">Categorías ></a><a class="text-secondary" href="products.html">${product.category}</a></div> <hr>
   <p class="fs-3 shadow p-3 mb-3 mt-4 bg-body rounded fst-italic">${product.description}<p>
   <h2 class="shadow p-3 my-3 bg-body rounded">Precio: ${product.currency} ${product.cost}</h2>
   <h2 class="shadow p-3 mb-5 bg-body rounded">Ventas: ${product.soldCount} </h2>
@@ -42,31 +39,6 @@ function showData(product) {
 
 }
 
-//FUNCION PARA TENER NOMBRE DE LOS PRODUCTOS DE LINK ANTERIOR
-let category;
-
-async function getData (url){
-  try {
-
-    let response = await fetch(url);
-    let responseContents = await response.json();
-    category = responseContents.catName;
-
-  } catch (error) {
-
-    const message = document.createElement("div");
-    message.innerHTML =
-    `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-    HTTP ERROR: ${error.message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
-
-    document.body.appendChild(message);
-
-  }
-}
-
-getData(DATA_PRODUCTS);
 
 // FUNCION PARA MOSTRAR LOS PRODUCTOS RELACIONADOS
 
@@ -257,7 +229,7 @@ async function getProducts (url){
   }
 }
 
-getProducts(CAT_PRODUCTS);
+getProducts(PRODUCT_INFO_URL + ProductNum);
 
 
 
@@ -348,7 +320,7 @@ function setComments(comment, bool){
 
 async function getProductComments(productID) {
 
-  const commentsURL = `https://japceibal.github.io/emercado-api/products_comments/${productID}.json`;
+  const commentsURL = PRODUCT_INFO_COMMENTS_URL + ProductNum;
 
   try {
     const response = await fetch(commentsURL);
@@ -489,7 +461,7 @@ function saveComment(comment) {
 
 
 
-// Función para cargar comments desde LocalStorage
+// Función para cargar comentarios desde LocalStorage
 
 function loadCommentsFromLocalStorage() {
   const commentsJSON = localStorage.getItem("comments");

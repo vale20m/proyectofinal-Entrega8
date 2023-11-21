@@ -72,7 +72,7 @@
           <h2>Dirección de envío</h2>
           <div class="mb-3">
             <label for="street" class="form-label">Calle:</label>
-            <input type="text" class="form-control" id="street" name="street" required pattern="[A-Za-z ]+">
+            <input type="text" class="form-control" id="street" name="street" required pattern="[A-Za-z][A-Za-z ]*[A-Za-z]">
             <div class="invalid-feedback">Ingresa una calle válida</div>
           </div>
           <div class="mb-3">
@@ -82,7 +82,7 @@
           </div>
           <div class="mb-5">
             <label for="corner" class="form-label">Esquina:</label>
-            <input type="text" class="form-control" id="corner" name="corner" required pattern="[A-Za-z ]+">
+            <input type="text" class="form-control" id="corner" name="corner" required pattern="[A-Za-z][A-Za-z ]*[A-Za-z]">
             <div class="invalid-feedback">Ingresa una esquina válida</div>
           </div>
           <hr>

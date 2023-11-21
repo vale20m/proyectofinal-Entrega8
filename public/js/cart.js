@@ -1,7 +1,5 @@
 // CONSTANTES PARA EL FUNCIONAMIENTO DE TODO EL CODIGO (URL Y CONTENEDORES DE HTML)
 
-const URL_USER = "https://japceibal.github.io/emercado-api/user_cart/25801.json"
-
 // API que tiene el valor de las divisas actualizado
 
 const URL_CURRENCIES = "https://v6.exchangerate-api.com/v6/b0fca623d878533edbdf61b4/latest/USD";
@@ -238,7 +236,7 @@ async function getCart(url1, url2) {
   }
 }
 
-getCart(URL_USER, URL_CURRENCIES);
+getCart(CART_INFO_URL, URL_CURRENCIES);
 
 function loadCartItems() {
     const productsJSON = localStorage.getItem("cartItems");

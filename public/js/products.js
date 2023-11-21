@@ -3,7 +3,7 @@
 También definimos un "acceso" (container) a la ubicacion en la que guardaremos
 los elementos extraidos de la API */
 
-let CategoryNum = localStorage.getItem("catID");
+const CategoryNum = localStorage.getItem("catID");
 
 const container = document.getElementById("info");
 
@@ -95,7 +95,7 @@ async function getData (url){
   }
 }
 
-getData(PRODUCTS_URL + CategoryNum + ".json");
+getData(PRODUCTS_URL + CategoryNum);
 
 let filteredProducts = productsArray;
 
