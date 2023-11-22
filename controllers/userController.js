@@ -2,14 +2,10 @@
 
 const userModel = require("../models/userModel");
 
+const jwt = require("jsonwebtoken");
+const CLAVE_SECRETA = "CLAVE SUPER SECRETA";
+
 // Manejamos las peticiones GET
-
-const getUsers = async (req, res) => {
-
-    const users = await userModel.getUsers();
-    res.json(users);
-
-}
 
 const getUserByEmail = async (req, res) => {
 
@@ -27,6 +23,20 @@ const postUser = async (req, res) => {
 
 }
 
+// Manejamos la verificación del usuario (retornamos un token si el usuario esta verificado)
+
+const verifyUser = async (req, res) => {
+
+    try {
+        const {email, password} = req.body;
+        const token = jwt.sign({email}, CLAVE_SECRETA);
+        res.status(200).json({token});
+    } catch (error) {
+        res.status(401).json({message: "Ha ocurrido un error."});
+    }
+
+};
+
 // Manejamos las peticiones DELETE
 
 const deleteUser = async (req, res) => {
@@ -37,8 +47,8 @@ const deleteUser = async (req, res) => {
 }
 
 module.exports = {
-    getUsers,
     getUserByEmail,
     postUser,
+    verifyUser,
     deleteUser
 }

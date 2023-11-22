@@ -8,6 +8,11 @@ const app = express();
 
 const port = 3000;
 
+// Traemos la libreria JWT y creamos una clave
+
+const jwt = require("jsonwebtoken");
+const CLAVE_SECRETA = "CLAVE SUPER SECRETA";
+
 
 // Establecemos que las respuestas sean en formato JSON
 
@@ -21,9 +26,13 @@ app.listen(port, () => {
     console.log(`Servidor ejecutándose en http://localhost:${port}`);
 });
 
-// app.get("/", (req, res) => {
-//     res.send("<h1>Bienvenid@ al sistema!</h1>");
-// });
+app.get("/", (req, res) => {
+    res.send("<h1>Bienvenid@ al sistema!</h1>");
+});
+
+// Verificamos al usuario
+
+
 
 // Realizamos todas las operaciones
 

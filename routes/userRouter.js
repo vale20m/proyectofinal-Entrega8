@@ -4,11 +4,11 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const userRouter = express.Router();
 
-userRouter.get("/", userController.getUsers);
-
 userRouter.get("/:email/:password", userController.getUserByEmail);
 
 userRouter.post("/", userController.postUser);
+
+userRouter.post("/verify", userController.verifyUser);
 
 userRouter.delete("/", userController.deleteUser);
 

@@ -148,6 +148,8 @@ sendLogin.addEventListener("click", async function(event){
         const bool = await searchUser(`http://localhost:3000/login/${email.value}/${password.value}`);
         if (bool){
             localStorage.setItem("email", email.value);
+            const token = await getToken("http://localhost:3000/login/verify", {email: email.value, password: password.value});
+            localStorage.setItem("token", token);
             sendLogin.disabled = true;
             openModal.disabled = true;
             setTimeout(() => {
@@ -199,5 +201,29 @@ async function searchUser(url){
     }
 
     return false;
+
+}
+
+// Realizamos un fetch con el método POST para conseguir un token de verificación
+
+async function getToken(url, user){
+
+    try {
+        
+        let response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user)
+        });
+
+        let responseContents = await response.json();
+
+        return responseContents.token;
+
+    } catch (error) {
+        console.log(error.message);
+    }
 
 }
