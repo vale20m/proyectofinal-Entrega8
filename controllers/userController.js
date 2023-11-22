@@ -1,4 +1,4 @@
-// Establecemos como se manejan las peticiones
+// Establecemos como se manejan las peticiones sobre usuarios
 
 const userModel = require("../models/userModel");
 

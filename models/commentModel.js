@@ -10,10 +10,37 @@ mariadb.createPool({
     connectionLimit: 5
 });
 
+// Función que retorna los comentarios de la base de datos relacionados con ese producto
 
-// Funcion que retorna el elemento de la base de datos que coincide con ese email
+const getCommentsByProductID = async (productID) => {
 
-const getUserByEmail = async (email, password) => {
+    let conn;
+    try {
+        
+        conn = await pool.getConnection();
+
+        const rows = await conn.query(
+            `SELECT * FROM comments WHERE product = ?`, [productID]
+        );
+
+        if (rows.length == 0){
+            return [{message: "No se encontraron comentarios."}];
+        }
+
+        return rows;
+    } catch (error) {
+        
+    }finally {
+        if (conn) conn.release();
+    }
+    return [{message: "Se produjo un error."}];
+
+}
+
+
+// Función que retorna el comentario de la base de datos relacionado con ese producto y usuario
+
+const getCommentByUserAndProductID = async (user, product) => {
 
     let conn;
     try {
@@ -21,15 +48,11 @@ const getUserByEmail = async (email, password) => {
         conn = await pool.getConnection();
 
         const row = await conn.query(
-            `SELECT * FROM users WHERE email=?`, [email]
+            `SELECT * FROM comments WHERE user = ? AND product = ?`, [user, product]
         );
 
         if (row.length == 0){
-            return [{message: "No existe un usuario con ese email en el sistema."}];
-        }
-
-        if (row[0].password != password){
-            return [{message: "La contraseña ingresada no es correcta."}];
+            return [{message: "No se encontraron comentarios."}]
         }
 
         return row;
@@ -42,32 +65,30 @@ const getUserByEmail = async (email, password) => {
 
 }
 
-// Funcion que retorna el usuario agregado a la base de datos.
+// Función que retorna un comentario luego de agregarlo a la base de datos
 
-const postUser = async (user) => {
+const postComment = async (comment) => {
 
     let conn;
     try {
         
         conn = await pool.getConnection();
 
-        const check = await conn.query(
-            `SELECT * FROM users WHERE email=?`, [user.email]
-        );
+        const check = await getCommentByUserAndProductID(comment.user, comment.product);
 
-        if (check.length != 0){
-            return [{message: "Ya existe un usuario con ese email en el sistema."}];
+        if (check[0].message == undefined){
+            return [{message: "Ya realizaste un comentario en este producto."}];
         }
 
         const insert = await conn.query(
-            `INSERT INTO users (email, password) VALUES (?, ?)`, [user.email, user.password]
+            `INSERT INTO comments (product, user, description, dateTime, score) VALUES (?, ?, ?, ?, ?)`, [comment.product, comment.user, comment.description, comment.dateTime, comment.score]
         );
         
-        const row = await conn.query(`SELECT * FROM users WHERE email=?`, [user.email]);
+        const row = await getCommentByUserAndProductID(comment.user, comment.product);
 
         return row;
     } catch (error) {
-        
+
     }finally {
         if (conn) conn.release();
     }
@@ -118,7 +139,8 @@ const deleteUser = async (user) => {
 // Exportamos las funciones
 
 module.exports = {
-    getUserByEmail,
-    postUser,
+    getCommentsByProductID,
+    getCommentByUserAndProductID,
+    postComment,
     deleteUser
 }

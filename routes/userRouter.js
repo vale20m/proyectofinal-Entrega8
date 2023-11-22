@@ -1,4 +1,4 @@
-// Colocamos las rutas (o endpoints) sobre los que trabajamos, y que funciones se ejecutaran en cada uno de ellos
+// Colocamos las rutas (o endpoints) sobre los que trabajamos en relacion a los usuarios, y que funciones se ejecutaran en cada uno de ellos
 
 const express = require("express");
 const userController = require("../controllers/userController");

@@ -276,39 +276,38 @@ function showStars(score) {
 
 // Función para establecer el estilo de los comentarios
 
-function setComments(comment, bool){
-  if (bool){
+function setComments(comment){
 
-    const listItem = document.createElement("div");
-    listItem.classList.add("list-group-item");
+  const listItem = document.createElement("div");
+  listItem.classList.add("list-group-item");
 
-    // Crea un elemento para mostrar la puntuación en forma de estrellas
+  // Crea un elemento para mostrar la puntuación en forma de estrellas
 
-    const starsContainer = showStars(comment.score);
+  const starsContainer = showStars(comment.score);
 
-    const userElement = document.createElement("span");
-    userElement.classList.add("fw-bold");
-    userElement.textContent = comment.user;
+  const userElement = document.createElement("span");
+  userElement.classList.add("fw-bold");
+  userElement.textContent = comment.user;
 
-    // Agrega el nombre de usuario, la fecha y las estrellas al elemento de lista
+  // Agrega el nombre de usuario, la fecha y las estrellas al elemento de lista
 
-    const commentTexto = ` - ${comment.fecha} - `;
-    listItem.appendChild(userElement);
-    listItem.innerHTML += commentTexto;
-    listItem.appendChild(starsContainer);
+  const commentContent = ` - ${comment.dateTime} - `;
+  listItem.appendChild(userElement);
+  listItem.innerHTML += commentContent;
+  listItem.appendChild(starsContainer);
 
-    listItem.appendChild(document.createElement("br"));
+  listItem.appendChild(document.createElement("br"));
 
-    const commentElement = document.createElement("span");
-    commentElement.classList.add("fw-light");
-    commentElement.textContent = comment.texto;
+  const commentElement = document.createElement("span");
+  commentElement.classList.add("fw-light");
+  commentElement.textContent = comment.description;
 
-    listItem.appendChild(commentElement);
+  listItem.appendChild(commentElement);
 
-    // Agrega el elemento de lista al contenedor en la página
+  // Agrega el elemento de lista al contenedor en la página
 
-    commentsContainer.appendChild(listItem);
-  }
+  commentsContainer.appendChild(listItem);
+
 }
 
 
@@ -316,32 +315,39 @@ function setComments(comment, bool){
 
 // Función para cargar comentarios desde una URL asociada al ID del producto
 
-async function getProductComments(productID) {
+async function getProductComments(url) {
 
-  const commentsURL = PRODUCT_INFO_COMMENTS_URL + ProductNum;
+  const commentsURL = url + ProductNum;
 
   try {
-    const response = await fetch(commentsURL);
 
-    const comments = await response.json();
+    // Traemos los comentarios del JSON
+
+    const responseJSON = await fetch(commentsURL);
+
+    let comments = await responseJSON.json();
+
+    // Traemos los comentarios de la base de datos
+
+    const responseDB = await fetch(`http://localhost:3000/comments/${ProductNum}`);
+
+    const commentsDB = await responseDB.json();
+
+
+    if (commentsDB[0].message == undefined){
+      for (const comment of commentsDB) {
+        comments.push(comment);
+      }
+    }
 
     if (comments && comments.length > 0) {
 
-      // Convierte los comentarios a objetos
-
-      const convertedComments = comments.map(comment => ({
-        user: comment.user,
-        fecha: comment.dateTime,
-        score: comment.score,
-        texto: comment.description
-      }));
-
       // Ordena los comentarios de más viejos a más nuevos por fecha
 
-      convertedComments.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      comments.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
 
-      convertedComments.forEach((comment) => {
-        setComments(comment, true);
+      comments.forEach((comment) => {
+        setComments(comment);
       });
 
     }
@@ -361,28 +367,37 @@ async function getProductComments(productID) {
 
   }
 
-  // Llama a la función para cargar los commentarios al cargar la página
-
-  loadCommentsFromLocalStorage();
 }
 
 // Llama a la función para cargar los commentarios desde la URL al cargar la página
 
-getProductComments(productID);
+getProductComments(PRODUCT_INFO_COMMENTS_URL);
 
 
 
 // Agregar evento click al botón "Agregar"
 
-sendCommentButton.addEventListener("click", function () {
+sendCommentButton.addEventListener("click", async function () {
 
   // Chequeamos que el usuario haya iniciado sesion, y en caso de que no, le mostramos una alerta
 
+  const message = document.createElement("div");
+
   if (localStorage.getItem("email") != undefined){
 
-    const fecha = getActualDate();
+    const dateTime = getActualDate();
 
     const score = parseInt(commentScore.value);
+
+    const check = await postComment("http://localhost:3000/comments", {
+      user: userEmail,
+      dateTime: dateTime,
+      score: score,
+      description: commentText.value,
+      product: ProductNum
+    });
+
+    if (check.message == undefined){
 
     const listItem = document.createElement("li");
     listItem.classList.add("list-group-item");
@@ -397,7 +412,7 @@ sendCommentButton.addEventListener("click", function () {
 
     // Agregar el correo del usuario, la fecha y las estrellas al elemento de lista
 
-    const comment = ` - ${fecha} - `;
+    const comment = ` - ${dateTime} - `;
     listItem.appendChild(userElement);
     listItem.innerHTML += comment;
     listItem.appendChild(starsContainer);
@@ -414,66 +429,60 @@ sendCommentButton.addEventListener("click", function () {
 
     commentText.value = "";
     commentScore.value = 1;
-    
-    // Guardar el comentario en localStorage
 
-    saveComment({
-      user: userEmail,
-      fecha,
-      score,
-      texto: commentElement.textContent,
-      productID: ProductNum
-    });
+    message.innerHTML =
+    `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+    ¡Gracias por tu comentario!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+
+    } else {
+
+      message.innerHTML =
+      `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+      ${check.message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+
+    }
   
   } else {
 
-    const message = document.createElement("div");
     message.innerHTML =
     `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
     Inicia sesión para comentar y puntuar productos.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>`;
 
-    document.body.appendChild(message);
-
   }
+
+  document.body.appendChild(message);
 
 });
 
+// Realizamos un fetch método POST para enviar el comentario a la base de datos
 
+async function postComment(url, user){
 
-// Función para guardar un comentario en formato JSON en localStorage
-
-function saveComment(comment) {
-  let commentsJSON = localStorage.getItem("comments");
-
-  if (!commentsJSON) {
-    commentsJSON = "[]";
-  }
-
-  const comments = JSON.parse(commentsJSON);
-  comments.push(comment);
-
-  localStorage.setItem("comments", JSON.stringify(comments));
-}
-
-
-
-// Función para cargar comentarios desde LocalStorage
-
-function loadCommentsFromLocalStorage() {
-  const commentsJSON = localStorage.getItem("comments");
-
-  if (commentsJSON) {
-    const comments = JSON.parse(commentsJSON);
-
-    comments.forEach((comment) => {
-      setComments(comment, comment.productID == ProductNum);
+  try {
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user)
     });
 
-  }
-}
+    const responseContents = await response.json();
 
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
 
 
 // Función para obtener la fecha actual en un formato específico

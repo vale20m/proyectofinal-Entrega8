@@ -69,3 +69,7 @@ app.get("/sell", (req, res) => {
 const userRouter = require("./routes/userRouter");
 
 app.use("/login", userRouter);
+
+const commentRouter = require("./routes/commentRouter")
+
+app.use("/comments", commentRouter);
