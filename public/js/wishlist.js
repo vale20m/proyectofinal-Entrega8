@@ -7,7 +7,7 @@ function showWishlistedItems(array){
     wishlistItems.innerHTML = 
     `<h1 class="mt-3 mb-5">Actualmente, tienes los siguientes productos en tu lista de deseados:</h1>`
 
-    for (const product of array) {
+    for (const item of array) {
 
         // LOS PRODUCTOS SE MUESTRAN EN FORMATO "LIST-GROUP"
         
@@ -15,29 +15,27 @@ function showWishlistedItems(array){
         div.innerHTML =
         
         `<div class="w-75 mx-auto list-group-item list-group-item-action cursor-active border rounded">
-            <div class="row my-1 mx-2 position-relative" onclick="showProduct(${product.id})">
-                <img class="col-md-5 offset-md-0 col-10 offset-1 mt-2 mb-1 img-thumbnail" src="${product.image}">
-                <div class="col-md-4 offset-md-0 col-11 offset-1 my-auto py-1 fs-4">${product.name}</div>
-                <div class="col-md-3 offset-md-0 col-11 offset-1 my-auto py-1 fs-4">Precio: ${product.currency} ${product.cost}</div>
+            <div class="row my-1 mx-2 position-relative" onclick="showProduct(${item.product})">
+                <img class="col-md-5 offset-md-0 col-10 offset-1 mt-2 mb-1 img-thumbnail" src="${item.image}">
+                <div class="col-md-4 offset-md-0 col-11 offset-1 my-auto py-1 fs-4">${item.name}</div>
+                <div class="col-md-3 offset-md-0 col-11 offset-1 my-auto py-1 fs-4">Precio: ${item.currency} ${item.cost}</div>
             </div>
             <button type="button" id="closeButton" class="close btn position-absolute top-0 end-0" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>`;
 
         const closeButton = div.querySelector("#closeButton");
 
-        // ADD EVENT LISTENER QUE ELIMINA UN ITEM DEL LOCAL STORAGE CUANDO SE CLIQUEA EL BOTON "CERRAR"
+        // AddEventListener que elimina un producto de la wishlist (base de datos) de un usuario cuando se presiona el boton "cerrar"
 
         closeButton.addEventListener("click", function(){
             div.innerHTML = "";
-            deleteItems(product.id);
+            deleteItems(`http://localhost:3000/wishlist/${item.user}/${item.product}`);
         });
 
         wishlistItems.appendChild(div);
     }
 
 }
-
-let userItems = [];
 
 // FUNCION QUE LLEVA A LA PAGINA "PRODUCT-INFO.HTML" AL CLIQUEAR UN PRODUCTO
 
@@ -46,43 +44,50 @@ function showProduct(productID){
     window.location = "product-info.html";
 }
 
-// FUNCION PRINCIPAL QUE MUESTRA LOS ITEMS DE LA WISHLIST (EN CASO DE QUE HAYAN) O UN MENSAJE
+// Función que muestra los items de la wishlist del usuario (en caso de que los hayan) o un mensaje
 
-function setItems(array){
+async function showItems(url){
 
-    // Agregamos los items del usuario actual
+    // Mostramos los items del usuario actual
 
-    const localItems = JSON.parse(localStorage.getItem("wishlistItems"));
-    if (localItems){
-        for (let i = 0; i < localItems.length; i++){
-            if (localItems[i].username == localStorage.getItem("email")){
-                array.push(localItems[i]);
-            }
+    try {
+
+        const response = await fetch(url);
+
+        const responseContents = await response.json();
+        
+        // Si el usuario actual tiene items en la lista, se muestran, y si no, se muestra un mensaje
+
+        if (responseContents[0].message != undefined){
+            wishlistItems.innerHTML = `<h1 class="mt-3">Actualmente no hay productos en la lista de deseados</h1>`;
+        } else {
+            showWishlistedItems(responseContents);
         }
+
+    } catch (error) {
+        console.log(error.message);
     }
 
-    // Si el usuario actual tiene items en la lista, se muestran, y si no, se muestra un mensaje
-
-    if (!array || array.length == 0){
-        wishlistItems.innerHTML = `<h1 class="mt-3">Actualmente no hay productos en la lista de deseados</h1>`;
-    } else {
-        showWishlistedItems(array);
-    }
 }
 
-setItems(userItems);
+showItems(`http://localhost:3000/wishlist/${localStorage.getItem("email")}`);
 
-// FUNCION QUE ELIMINA UN PRODUCTO DEL LOCAL STORAGE DE LA WISHLIST (BUSCANDOLO POR SU ID)
+// Función que elimina un producto de la wishlist del usuario (base de datos)
 
-function deleteItems(id){
-    let array = JSON.parse(localStorage.getItem("wishlistItems"));
-    for (let i = 0; i < array.length; i++){
-        if (array[i].id == id && array[i].username == localStorage.getItem("email")){
-            array.splice(i, 1);
-            localStorage.setItem("wishlistItems", JSON.stringify(array));
-            if (array.length == 0){
-                wishlistItems.innerHTML = `<h1 class="mt-3 mx-auto">Actualmente no hay productos en la lista de deseados</h1>`
-            }
-        }
+async function deleteItems(url){
+
+    try {
+        
+        const response = await fetch(url, {
+            method: "DELETE"
+        });
+
+        const responseContents = response.json();
+
+        return responseContents;
+
+    } catch (error) {
+        console.log(error.message);
     }
+
 }

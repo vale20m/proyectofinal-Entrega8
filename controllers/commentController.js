@@ -11,13 +11,6 @@ const getCommentsByProductID = async (req, res) => {
 
 }
 
-const getCommentByUserAndProductID = async (req, res) => {
-
-    const comment = await commentModel.getCommentByUserAndProductID(req.params.user, req.params.product);
-    res.json(comment[0]);
-
-}
-
 // Manejamos las peticiones POST
 
 const postComment = async (req, res) => {
@@ -38,7 +31,6 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     getCommentsByProductID,
-    getCommentByUserAndProductID,
     postComment,
     deleteUser
 }

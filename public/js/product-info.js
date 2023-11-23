@@ -166,7 +166,7 @@ async function getProducts (url){
       }
     });
 
-    checkActive(wishlistButton, responseContents.id);
+    await checkActive(`http://localhost:3000/wishlist/${localStorage.getItem("email")}/${responseContents.id}`, wishlistButton);
 
     // ADD EVENT LISTENER QUE AGREGA UN PRODUCTO A LA WISHLIST AL CLIQUEAR EL CORAZON (O LO QUITA SI YA ESTABA AGREGADO)
 
@@ -181,20 +181,20 @@ async function getProducts (url){
           wishlistButton.classList.add("activeHeart");
           wishlistButton.classList.remove("darkModeHeart");
           
-          saveWishlistProducts({
+          saveWishlistProducts("http://localhost:3000/wishlist", {
             name: responseContents.name,
             cost: responseContents.cost,
             currency: responseContents.currency,
             image: responseContents.images[0],
-            id: responseContents.id,
-            username: localStorage.getItem("email")
+            product: responseContents.id,
+            user: localStorage.getItem("email")
           });
         
         } else {
           
           checkLocalStorage(wishlistButton);
           wishlistButton.classList.remove("activeHeart");
-          deleteWishlistProduct(responseContents.id);
+          deleteWishlistProduct(`http://localhost:3000/wishlist/${localStorage.getItem("email")}/${ProductNum}`);
         
         }
 
@@ -545,72 +545,73 @@ function saveProductProperties(product) {
 
 }
 
-// FUNCION QUE GUARDA UN ELEMENTO EN LA WISHLIST CUANDO SE PRESIONA EL CORAZON (SI NO ESTA AGREGADO)
+// Función que guarda un producto en la wishlist (Base de datos) cuando se presiona el corazón (si no esta agregado)
 
-function saveWishlistProducts(product) {
+async function saveWishlistProducts(url, item) {
   
-  let productsJSON = localStorage.getItem("wishlistItems");
+  try {
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(item)
+    });
 
-  if (!productsJSON) {
-    productsJSON = "[]";
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
   }
-  const products = JSON.parse(productsJSON);
-
-  for (i = 0; i < products.length; i++){
-    if (products[i].id == product.id && products[i].username == product.username){
-      return;
-    }
-  }
-
-  products.push(product);
-
-  localStorage.setItem("wishlistItems", JSON.stringify(products));
 
 }
 
-// FUNCION QUE ELIMINA UN ELEMENTO DEL LOCAL STORAGE CUANDO PRESIONA EL CORAZON (SI ESTABA EN LA WISHLIST)
+// Función que elimina un producto de la wishlist de un usuario (base de datos) cuando se presiona el corazón (si estaba en la wishlist)
 
-function deleteWishlistProduct(id){
-  let productsJSON = localStorage.getItem("wishlistItems");
+async function deleteWishlistProduct(url){
+  
+  try {
+    
+    const response = await fetch(url, {
+      method: "DELETE",
+    });
 
-  if (!productsJSON){
-    return;
-  }
+    const responseContents = await response.json();
 
-  const products = JSON.parse(productsJSON);
+    return responseContents;
 
-  for (i = 0; i < products.length; i++){
-    if (products[i].id == id && products[i].username == localStorage.getItem("email")){
-      products.splice(i, 1);
-      localStorage.setItem("wishlistItems", JSON.stringify(products));
-      return;
-    }
+  } catch (error) {
+    console.log(error.message);
   }
 
 }
 
 // FUNCION QUE ANALIZA SI EL PRODUCTO ACTUAL ESTA EN EL LOCAL STORAGE Y, EN CASO DE ESTAR, COLOREA EL CORAZON DE ROJO
 
-function checkActive (button, id){
+async function checkActive (url, button){
 
-  let productsJSON = localStorage.getItem("wishlistItems");
+  try {
+    
+    const response = await fetch(url);
 
-  if (!productsJSON){
-    return;
-  }
+    const responseContents = await response.json();
 
-  const products = JSON.parse(productsJSON);
-
-  for (i = 0; i < products.length; i++){
-    if (products[i].id == id && products[i].username == localStorage.getItem("email")){
+    if (responseContents.message == undefined){
       button.classList.add("activeHeart");
-      return;
+    } else {
+      button.classList.remove("activeHeart");
     }
-  }
-  
-  button.classList.remove("activeHeart");
 
-  checkLocalStorage(button);
+    checkLocalStorage(button);
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(message.error);
+  }
 
 }
 

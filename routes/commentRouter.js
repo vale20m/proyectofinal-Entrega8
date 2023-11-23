@@ -6,8 +6,6 @@ const commentRouter = express.Router();
 
 commentRouter.get("/:product", commentController.getCommentsByProductID);
 
-commentRouter.get("/:product/:user", commentController.getCommentByUserAndProductID);
-
 commentRouter.post("/", commentController.postComment);
 
 commentRouter.delete("/", commentController.deleteUser);

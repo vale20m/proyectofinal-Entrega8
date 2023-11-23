@@ -70,6 +70,14 @@ const userRouter = require("./routes/userRouter");
 
 app.use("/login", userRouter);
 
-const commentRouter = require("./routes/commentRouter")
+// Realizamos las peticiones de comentarios
+
+const commentRouter = require("./routes/commentRouter");
 
 app.use("/comments", commentRouter);
+
+// Realizamos las peticiones de wishlist
+
+const wishlistRouter = require("./routes/wishlistRouter");
+
+app.use("/wishlist", wishlistRouter);
