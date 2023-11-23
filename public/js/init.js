@@ -1,11 +1,20 @@
+// Direcciones de donde sacamos los archivos .JSON
+
 const CATEGORIES_URL = "http://localhost:3000/cats";
 const PUBLISH_PRODUCT_URL = "http://localhost:3000/sell";
 const PRODUCTS_URL = "http://localhost:3000/cats_products/";
 const PRODUCT_INFO_URL = "http://localhost:3000/products/";
 const PRODUCT_INFO_COMMENTS_URL = "http://localhost:3000/products_comments/";
 const CART_INFO_URL = "http://localhost:3000/user_cart";
-const CART_BUY_URL = "http://localhost:3000/cart";
 const EXT_TYPE = ".json";
+
+// Duirecciones en las cuales manejamos las bases de datos
+
+const LOGIN_URL = "http://localhost:3000/login/";
+const COMMENTS_URL = "http://localhost:3000/comments/";
+const WISHLIST_URL = "http://localhost:3000/wishlist/";
+const CART_URL = "http://localhost:3000/cart";
+const BUY_CART_URL = "http://localhost:3000/buy_cart";
 
 
 let showSpinner = function(){

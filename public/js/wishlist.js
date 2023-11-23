@@ -29,7 +29,7 @@ function showWishlistedItems(array){
 
         closeButton.addEventListener("click", function(){
             div.innerHTML = "";
-            deleteItems(`http://localhost:3000/wishlist/${item.user}/${item.product}`);
+            deleteItems(WISHLIST_URL + item.user + "/" + item.product);
         });
 
         wishlistItems.appendChild(div);
@@ -70,7 +70,7 @@ async function showItems(url){
 
 }
 
-showItems(`http://localhost:3000/wishlist/${localStorage.getItem("email")}`);
+showItems(WISHLIST_URL + localStorage.getItem("email"));
 
 // Función que elimina un producto de la wishlist del usuario (base de datos)
 

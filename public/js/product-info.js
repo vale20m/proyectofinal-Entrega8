@@ -3,6 +3,8 @@
 
 const ProductNum = localStorage.getItem("productID");
 
+const userEmail = localStorage.getItem("email");
+
 // "Traemos" utilizando el DOM el div de id "productInfo" para colocar la información en él
 
 const container = document.getElementById("productInfo");
@@ -122,16 +124,16 @@ async function getProducts (url){
 
       // Chequeamos que el usuario haya iniciado sesion, y en caso de que no, le mostramos una alerta
 
-      if (localStorage.getItem("email") != undefined){
+      if (userEmail != undefined){
 
-        saveProductProperties({
+        saveProductProperties(CART_URL, {
           name: responseContents.name,
           unitCost: responseContents.cost,
           currency: responseContents.currency,
           image: responseContents.images[0],
           count: 1,
           id: responseContents.id,
-          username: localStorage.getItem("email")
+          user: userEmail
         });
 
       } else {
@@ -166,7 +168,7 @@ async function getProducts (url){
       }
     });
 
-    await checkActive(`http://localhost:3000/wishlist/${localStorage.getItem("email")}/${responseContents.id}`, wishlistButton);
+    await checkActive(WISHLIST_URL + userEmail + "/" + responseContents.id, wishlistButton);
 
     // ADD EVENT LISTENER QUE AGREGA UN PRODUCTO A LA WISHLIST AL CLIQUEAR EL CORAZON (O LO QUITA SI YA ESTABA AGREGADO)
 
@@ -174,27 +176,27 @@ async function getProducts (url){
 
       // Chequeamos que el usuario haya iniciado sesion, y en caso de que no, le mostramos una alerta
       
-      if (localStorage.getItem("email") != undefined){
+      if (userEmail != undefined){
 
         if (!wishlistButton.classList.contains("activeHeart")){
           
           wishlistButton.classList.add("activeHeart");
           wishlistButton.classList.remove("darkModeHeart");
           
-          saveWishlistProducts("http://localhost:3000/wishlist", {
+          saveWishlistProducts(WISHLIST_URL, {
             name: responseContents.name,
             cost: responseContents.cost,
             currency: responseContents.currency,
             image: responseContents.images[0],
             product: responseContents.id,
-            user: localStorage.getItem("email")
+            user: userEmail
           });
         
         } else {
           
           checkLocalStorage(wishlistButton);
           wishlistButton.classList.remove("activeHeart");
-          deleteWishlistProduct(`http://localhost:3000/wishlist/${localStorage.getItem("email")}/${ProductNum}`);
+          deleteWishlistProduct(WISHLIST_URL + userEmail + "/" + ProductNum);
         
         }
 
@@ -241,11 +243,6 @@ const commentScore = document.getElementById("score");
 const sendCommentButton = document.getElementById("sendComment");
 const commentsContainer = document.getElementById("commentsContainer");
 
-// Obtener el correo del usuario de localStorage y el ID del item actual (si existen)
-
-const userEmail = localStorage.getItem("email");
-
-const productID = localStorage.getItem("productID");
 
 
 // Función para crear las estrellas
@@ -329,7 +326,7 @@ async function getProductComments(url) {
 
     // Traemos los comentarios de la base de datos
 
-    const responseDB = await fetch(`http://localhost:3000/comments/${ProductNum}`);
+    const responseDB = await fetch(COMMENTS_URL + ProductNum);
 
     const commentsDB = await responseDB.json();
 
@@ -383,13 +380,13 @@ sendCommentButton.addEventListener("click", async function () {
 
   const message = document.createElement("div");
 
-  if (localStorage.getItem("email") != undefined){
+  if (userEmail != undefined){
 
     const dateTime = getActualDate();
 
     const score = parseInt(commentScore.value);
 
-    const check = await postComment("http://localhost:3000/comments", {
+    const check = await postComment(COMMENTS_URL, {
       user: userEmail,
       dateTime: dateTime,
       score: score,
@@ -500,7 +497,7 @@ function getActualDate() {
 }
 
 // ENTREGA 5: FUNCIONALIDAD PARA GUARDAR PROPIEDADES DEL PRODUCTO SELECCIONADO EN EL LOCAL STORAGE
-// NO LO GUARDA SI EL MISMO user INTENA GUARDAR EL MISMO ITEM
+// NO LO GUARDA SI EL MISMO USUARIO INTENA GUARDAR EL MISMO ITEM
 
 function saveProductProperties(product) {
   let productsJSON = localStorage.getItem("cartItems");
@@ -511,7 +508,7 @@ function saveProductProperties(product) {
   const products = JSON.parse(productsJSON);
 
   for (i = 0; i < products.length; i++){
-    if (products[i].id == product.id && products[i].username == product.username){
+    if (products[i].id == product.id && products[i].user == product.user){
 
       // Agregar una alerta si el producto ya está en el carrito.
 

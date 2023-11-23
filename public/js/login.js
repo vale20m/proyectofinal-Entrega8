@@ -43,7 +43,7 @@ signInForm.addEventListener('submit', function(event){
     });
 
     if (verifyUser()){
-        setUser("http://localhost:3000/login", {email:createEmail.value, password:createPassword1.value});
+        setUser(LOGIN_URL, {email:createEmail.value, password:createPassword1.value});
     }
 
     event.preventDefault();
@@ -145,10 +145,10 @@ sendLogin.addEventListener("click", async function(event){
     event.preventDefault();
 
     if (loginForm.checkValidity()){
-        const bool = await searchUser(`http://localhost:3000/login/${email.value}/${password.value}`);
+        const bool = await searchUser(LOGIN_URL + email.value + "/" + password.value);
         if (bool){
             localStorage.setItem("email", email.value);
-            const token = await getToken("http://localhost:3000/login/verify", {email: email.value, password: password.value});
+            const token = await getToken(LOGIN_URL + "verify", {email: email.value, password: password.value});
             localStorage.setItem("token", token);
             sendLogin.disabled = true;
             openModal.disabled = true;

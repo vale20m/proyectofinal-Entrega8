@@ -56,10 +56,6 @@ app.get("/user_cart", (req, res) => {
     res.json(require(`./emercado-api/user_cart/25801.json`));
 });
 
-app.get("/cart", (req, res) => {
-    res.json(require("./emercado-api/cart/buy.json"));
-});
-
 app.get("/sell", (req, res) => {
     res.json(require("./emercado-api/sell/publish.json"));
 });
@@ -81,3 +77,47 @@ app.use("/comments", commentRouter);
 const wishlistRouter = require("./routes/wishlistRouter");
 
 app.use("/wishlist", wishlistRouter);
+
+
+// Verificamos que el usuario este autorizado antes de realizar una solicitud a la base de datos de los carritos
+
+// app.use("/cart", (req, res, next) => {
+    
+//     try {
+//         const decoded = jwt.verify(req.headers["access-token"], CLAVE_SECRETA);
+//         console.log(decoded);
+//         next();
+//     } catch (error) {
+//         console.log("No eres un usuario autorizado!!!");
+//         res.status(401).json({message: "Debes estar autorizado para realizar esa acción"});
+//     }
+
+// });
+
+// app.get("/cart", (req, res) => {
+//     res.json(require(`./emercado-api/cart/buy.json`));
+// });
+
+// const cartRouter = require("./routes/cartRouter");
+
+// app.use("/cart", cartRouter);
+
+
+// // Verificamos que el usuario este autorizado antes de realizar una solicitud a la base de datos de las compras completadas
+
+// app.use("/buy_cart", (req, res, next) => {
+    
+//     try {
+//         const decoded = jwt.verify(req.headers["access-token"], CLAVE_SECRETA);
+//         console.log(decoded);
+//         next();
+//     } catch (error) {
+//         console.log("No eres un usuario autorizado!!!");
+//         res.status(401).json({message: "Debes estar autorizado para realizar esa acción"});
+//     }
+
+// });
+
+// const buyCartRouter = require("./routes/buyCartRouter");
+
+// app.use("/buy_cart", buyCartRouter);
