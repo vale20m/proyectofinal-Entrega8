@@ -8,12 +8,12 @@ const PRODUCT_INFO_COMMENTS_URL = "http://localhost:3000/products_comments/";
 const CART_INFO_URL = "http://localhost:3000/user_cart";
 const EXT_TYPE = ".json";
 
-// Duirecciones en las cuales manejamos las bases de datos
+// Direcciones en las cuales manejamos las bases de datos
 
 const LOGIN_URL = "http://localhost:3000/login/";
 const COMMENTS_URL = "http://localhost:3000/comments/";
 const WISHLIST_URL = "http://localhost:3000/wishlist/";
-const CART_URL = "http://localhost:3000/cart";
+const CART_URL = "http://localhost:3000/cart/";
 const BUY_CART_URL = "http://localhost:3000/buy_cart";
 
 

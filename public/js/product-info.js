@@ -101,7 +101,7 @@ function changeBackground(){
   }
 }
 
-// Función que permite tomar el producto actual y guardarlo en el localStorage al precionar "Comprar", asi como agregarlo a la Wishlist y cambiar el color de fondo adecuadamente
+// Función que permite tomar el producto actual y guardarlo en la base de datos al precionar "Comprar", asi como agregarlo a la Wishlist y cambiar el color de fondo adecuadamente
 
 async function getProducts (url){
 
@@ -120,13 +120,13 @@ async function getProducts (url){
 
     // ANIDAMOS UN ADD EVENT LISTENER AL MISMO QUE SE ACTIVA CUANDO RECIBE UN CLICK Y GUARDA EL PRODUCTO EN EL LOCAL STORAGE
 
-    buyProduct.addEventListener("click", function(){
+    buyProduct.addEventListener("click", async function(){
 
       // Chequeamos que el usuario haya iniciado sesion, y en caso de que no, le mostramos una alerta
 
       if (userEmail != undefined){
 
-        saveProductProperties(CART_URL, {
+        const response = await saveProductProperties(CART_URL, {
           name: responseContents.name,
           unitCost: responseContents.cost,
           currency: responseContents.currency,
@@ -135,6 +135,30 @@ async function getProducts (url){
           id: responseContents.id,
           user: userEmail
         });
+
+        const message = document.createElement("div");
+
+        console.log(response);
+
+        if (response.message == undefined){
+
+          message.innerHTML = 
+          `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+            El producto se ha agregado al carrito.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>`;
+
+        } else {
+
+          message.innerHTML = 
+          `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+            ${response.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>`;
+
+        }
+
+        document.body.appendChild(message);
 
       } else {
 
@@ -499,46 +523,25 @@ function getActualDate() {
 // ENTREGA 5: FUNCIONALIDAD PARA GUARDAR PROPIEDADES DEL PRODUCTO SELECCIONADO EN EL LOCAL STORAGE
 // NO LO GUARDA SI EL MISMO USUARIO INTENA GUARDAR EL MISMO ITEM
 
-function saveProductProperties(product) {
-  let productsJSON = localStorage.getItem("cartItems");
+async function saveProductProperties(url, product) {
 
-  if (!productsJSON) {
-    productsJSON = "[]";
+  try {
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(product)
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
   }
-  const products = JSON.parse(productsJSON);
-
-  for (i = 0; i < products.length; i++){
-    if (products[i].id == product.id && products[i].user == product.user){
-
-      // Agregar una alerta si el producto ya está en el carrito.
-
-      const message = document.createElement("div");
-      message.innerHTML =
-      `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-        El producto ya se encuentra en el carrito.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>`;
-
-      document.body.appendChild(message);
-      return;
-
-    }
-  }
-
-  products.push(product);
-
-  localStorage.setItem("cartItems", JSON.stringify(products));
-
-  // Agregar una alerta después de agregar el producto al carrito.
-  
-  const message = document.createElement("div");
-  message.innerHTML =
-  `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-    El producto se ha agregado al carrito.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>`;
-
-  document.body.appendChild(message);
 
 }
 

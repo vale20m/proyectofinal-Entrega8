@@ -98,9 +98,9 @@ app.use("/wishlist", wishlistRouter);
 //     res.json(require(`./emercado-api/cart/buy.json`));
 // });
 
-// const cartRouter = require("./routes/cartRouter");
+const cartRouter = require("./routes/cartRouter");
 
-// app.use("/cart", cartRouter);
+app.use("/cart", cartRouter);
 
 
 // // Verificamos que el usuario este autorizado antes de realizar una solicitud a la base de datos de las compras completadas

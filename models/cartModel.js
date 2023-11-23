@@ -65,7 +65,7 @@ const getItemByUserAndProduct = async (user, id) => {
 
 }
 
-// Funcion que retorna el usuario agregado a la base de datos.
+// Función que retorna el usuario agregado a la base de datos.
 
 const postItem = async (item) => {
 
@@ -76,8 +76,8 @@ const postItem = async (item) => {
 
         const check = await getItemByUserAndProduct(item.user, item.id);
 
-        if (check[0].message != undefined){
-            return [{message: "Este item ya se encuentra en el carrito."}];
+        if (check[0].message == undefined){
+            return [{message: "El item ya se encuentra en el carrito."}];
         }
 
         const insert = await conn.query(
@@ -86,6 +86,32 @@ const postItem = async (item) => {
         );
         
         const row = await getItemByUserAndProduct(item.user, item.id);
+
+        return row;
+    } catch (error) {
+        
+    }finally {
+        if (conn) conn.release();
+    }
+    return [{message: "Se produjo un error."}];
+
+}
+
+// Función que modifica la cantidad de un item especificado
+
+const putItem = async (item, user, id) => {
+
+    let conn;
+    try {
+        
+        conn = await pool.getConnection();
+
+        const insert = await conn.query(
+            `UPDATE cart SET count = ? WHERE user = ? AND id = ?`,
+            [item.count, user, id]
+        );
+        
+        const row = await getItemByUserAndProduct(user, id);
 
         return row;
     } catch (error) {
@@ -129,5 +155,6 @@ module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
     postItem,
+    putItem,
     deleteItem
 }

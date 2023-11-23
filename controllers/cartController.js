@@ -27,6 +27,15 @@ const postItem = async (req, res) => {
 
 }
 
+// Manejamos las peticiones PUT
+
+const putItem = async (req, res) => {
+
+    const item = await cartModel.putItem(req.body, req.params.user, req.params.id);
+    res.json(item[0]);
+
+}
+
 // Manejamos las peticiones DELETE
 
 const deleteItem = async (req, res) => {
@@ -40,5 +49,6 @@ module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
     postItem,
+    putItem,
     deleteItem
 }

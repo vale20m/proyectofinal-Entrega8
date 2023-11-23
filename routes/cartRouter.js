@@ -10,6 +10,8 @@ cartRouter.get("/:user/:id", cartController.getItemByUserAndProduct);
 
 cartRouter.post("/", cartController.postItem);
 
+cartRouter.put("/:user/:id", cartController.putItem)
+
 cartRouter.delete("/:user/:id", cartController.deleteItem);
 
 module.exports = cartRouter;

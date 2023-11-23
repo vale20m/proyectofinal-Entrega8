@@ -31,6 +31,10 @@ function calculateCartSubtotal(array){
 
   let cartSubtotal = 0;
 
+  if (array[0].message != undefined){
+    return cartSubtotal;
+  }
+
   for (const product of array) {
 
     if (product.currency == "UYU"){
@@ -82,7 +86,7 @@ function updateQuantities(array){
 }
 
 
-function showCart(array){
+function showCartItems(array){
 
   // Agregamos un if para que las opciones de compra no se muestren si no hay items en el carrito
   if (array.length < 1){
@@ -126,11 +130,15 @@ function showCart(array){
 
     const closeButton = div.querySelector("#closeButton");
 
-    closeButton.addEventListener("click", function(){
+    closeButton.addEventListener("click", async function(){
       
       div.innerHTML = "";
 
-      deleteCartProducts(item.id, cartArray);
+      await deleteCartProducts(CART_URL + item.user + "/" + item.id);
+
+      array = await getCart(CART_URL + item.user);
+
+      updateQuantities(array);
         
     });
 
@@ -139,9 +147,7 @@ function showCart(array){
 
     const inputCount = div.querySelector("input");
 
-    inputCount.addEventListener("input", function(){
-
-      let change = false;
+    inputCount.addEventListener("input", async function(){
 
       const newCount = inputCount.value;
       if (newCount < 0){
@@ -152,20 +158,11 @@ function showCart(array){
       const subtotalContainer = div.querySelector("#subtotal");
       subtotalContainer.textContent = calculateSubtotal(item.currency, item.unitCost, newCount);
       
-      // TAMBIEN MODIFICAMOS LA CANTIDAD DEL ARTICULO Y LO ACTUALIZAMOS EN EL LOCAL STORAGE
+      // Modificamos la cantidad y actualizamos la base de datos
       
-      for (let i = 0; i < array.length-1; i++){
-        if (array[i+1].id == item.id && array[i+1].username == localStorage.getItem("email")){
-            array[i+1].count = newCount;
-            change = true;
-          }
-      }
+      await modifyCount(CART_URL + item.user + "/" + item.id, {count: newCount});
 
-      if (!change){
-        array[0].count = newCount;
-      }
-
-      localStorage.setItem("cartItems", JSON.stringify(array));
+      array = await getCart(CART_URL + item.user);
 
       // Modificamos el valor del subtotal, el costo de envío y el total del carrito
     
@@ -181,83 +178,95 @@ function showCart(array){
 
 }
 
-// Arreglo que contendrá todos los elementos del carrito
-
-let cartArray = [];
+let cartArray;
 
 // Variable que contendra los distintos cambios de varias monedas a peso uruguayo
 
 let currencyValues;
 
-async function getCart(url1, url2) {
-  try {
-    let responseItems = await fetch(url1);
-    let responseContentsItems = await responseItems.json();
+// Funcion que muestra los elementos del carrito
 
-    // Reemplazamos los elementos en el arreglo cartArray con los nuevos elementos del servidor
-    cartArray = responseContentsItems.articles;
+async function showCart() {
 
-    for (let i = 0; i < cartArray.length; i++){
-      cartArray[i].username = localStorage.getItem("email");
-    }
+  cartArray = await getCart(CART_URL + localStorage.getItem("email"));
+  currencyValues = await getCurrencies(URL_CURRENCIES);
 
-    // Creamos un array que carga los elementos del localStorage y los pasamos a cartArray
-
-    const localItems = loadCartItems();
-
-    if (localItems){
-      // Agregamos los elementos del almacenamiento local al arreglo cartArray
-      for (let i = 0; i < localItems.length; i++){
-        if (localStorage.getItem("email") == localItems[i].username && localItems[i].id != cartArray[0].id){
-          cartArray.push(localItems[i]);
-        }
-      }
-    }
-
-    localStorage.setItem("cartItems", JSON.stringify(cartArray));
-
-    // Realizamos un segundo fetch a una API con el cambio de peso a dolar actualizado
-
-    let responseCurrencies = await fetch(url2);
-    let responseContentsCurrencies = await responseCurrencies.json();
-
-    currencyValues = responseContentsCurrencies.conversion_rates.UYU;
-
-    // LLAMAMOS A LA FUNCION PARA MOSTRAR LOS ELEMENTOS DEL CARRITO
-
-    if (cartArray && cartArray != []){
-      showCart(cartArray);
-    } else {
-      cartItems.innerHTML = `<h1 class="mt-5">Actualmente no hay productos en el carrito</h1>`
-    }
-
-  } catch (error) {
-    console.log("HTTP ERROR: " + error.message);
+  if (cartArray[0].message == undefined){
+    showCartItems(cartArray);
+  } else {
+    cartItems.innerHTML = `<h1 class="mt-5">Actualmente no hay productos en el carrito</h1>`
   }
+
 }
 
-getCart(CART_INFO_URL, URL_CURRENCIES);
+showCart();
 
-function loadCartItems() {
-    const productsJSON = localStorage.getItem("cartItems");
+async function getCart(url){
 
-    if (productsJSON) {
-        const products = JSON.parse(productsJSON);
-        return products;
-    }
+  try {
+
+    const response = await fetch(url);
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
+async function getCurrencies(url){
+
+  try {
+  
+    const responseCurrencies = await fetch(url);
+    const responseContentsCurrencies = await responseCurrencies.json();
+
+    return responseContentsCurrencies.conversion_rates.UYU;
+  
+  } catch (error) {
+    console.log(message.error);
+  }
+
 }
 
 // FUNCION QUE ELIMINA UN ITEM DEL LOCAL STORAGE
 
-function deleteCartProducts(id, array){
-  for (let i = 0; i < array.length; i++){
-    if (array[i].id == id && array[i].username == localStorage.getItem("email")){
-      array.splice(i, 1);
-      updateQuantities(array);
-      localStorage.setItem("cartItems", JSON.stringify(array));
-      return;
-    }
+async function deleteCartProducts(url){
+
+  try {
+    
+    const response = await fetch(url, {
+      method: "DELETE"
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
   }
+
+}
+
+async function modifyCount(url, count){
+
+  try {
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(count)
+    });
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+
 }
 
 shipType.addEventListener("change", () => updateQuantities(cartArray));
