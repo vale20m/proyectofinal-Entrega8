@@ -100,3 +100,7 @@ app.get("/cart", (req, res) => {
 const cartRouter = require("./routes/cartRouter");
 
 app.use("/cart", cartRouter);
+
+const cartController = require("./controllers/cartController");
+
+app.get("/id_purchase/:user", cartController.getIDPurchase);

@@ -18,6 +18,13 @@ const getItemByUserAndProduct = async (req, res) => {
 
 }
 
+const getIDPurchase = async (req, res) => {
+
+    const id = await cartModel.getIDPurchase(req.params.user);
+    res.json(id);
+
+}
+
 // Manejamos las peticiones POST
 
 const postItem = async (req, res) => {
@@ -43,6 +50,13 @@ const putItem = async (req, res) => {
 
 }
 
+const putItemsBought = async (req, res) => {
+
+    const item = await cartModel.putItemsBought(req.params.user);
+    res.json(item[0]);
+
+}
+
 // Manejamos las peticiones DELETE
 
 const deleteItem = async (req, res) => {
@@ -52,19 +66,13 @@ const deleteItem = async (req, res) => {
 
 }
 
-const deleteItemsByUser = async (req, res) => {
-
-    const items = await cartModel.deleteItemsByUser(req.params.user);
-    res.json(items);
-
-}
-
 module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
+    getIDPurchase,
     postItem,
     putItem,
+    putItemsBought,
     deleteItem,
-    deleteItemsByUser,
     postPurchaseItem
 }

@@ -14,6 +14,7 @@ const LOGIN_URL = "http://localhost:3000/login/";
 const COMMENTS_URL = "http://localhost:3000/comments/";
 const WISHLIST_URL = "http://localhost:3000/wishlist/";
 const CART_URL = "http://localhost:3000/cart/";
+const ID_PURCHASE_URL = "http://localhost:3000/id_purchase/";
 
 
 let showSpinner = function(){

@@ -126,7 +126,30 @@ async function getProducts (url){
 
       if (userEmail != undefined){
 
+        let idPurchase = await getIDProduct(ID_PURCHASE_URL + userEmail);
+
+        console.log(idPurchase);
+
+        if (idPurchase.message != undefined){
+
+          idPurchase = await getCart(CART_URL + userEmail);
+
+          console.log(idPurchase);
+
+          if (idPurchase[0].message != undefined){
+            idPurchase = 1;
+          } else {
+            idPurchase = idPurchase[0].idPurchase;
+            idPurchase = parseInt(idPurchase);
+          }
+
+        } else {
+          idPurchase = parseInt(idPurchase);
+          idPurchase++;
+        }
+
         const response = await saveProductProperties(CART_URL, {
+          idPurchase: idPurchase,
           name: responseContents.name,
           unitCost: responseContents.cost,
           currency: responseContents.currency,
@@ -498,6 +521,51 @@ function getActualDate() {
   const segundos = fecha.getSeconds().toString().padStart(2, "0");
 
   return `${año}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
+}
+
+// Función que devuelve los items del carrito actual del usuario (los que no han sido comprados)
+
+async function getCart(url){
+
+  try {
+
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      }
+    });
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
+// Función que determina el valor del id de compra del producto
+
+async function getIDProduct(url){
+
+  try {
+    
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      }
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
 }
 
 // ENTREGA 5: FUNCIONALIDAD PARA GUARDAR PROPIEDADES DEL PRODUCTO SELECCIONADO EN EL LOCAL STORAGE

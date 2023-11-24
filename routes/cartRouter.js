@@ -10,11 +10,11 @@ cartRouter.get("/:user/:id", cartController.getItemByUserAndProduct);
 
 cartRouter.post("/", cartController.postItem);
 
-cartRouter.put("/:user/:id", cartController.putItem)
+cartRouter.put("/:user/:id", cartController.putItem);
+
+cartRouter.put("/:user", cartController.putItemsBought);
 
 cartRouter.delete("/:user/:id", cartController.deleteItem);
-
-cartRouter.delete("/:user", cartController.deleteItemsByUser);
 
 // Ruta en la que realizamos la compra del producto
 

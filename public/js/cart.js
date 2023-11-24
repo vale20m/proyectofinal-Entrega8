@@ -308,6 +308,28 @@ async function modifyCount(url, count){
 
 }
 
+async function putItemsBought(url){
+
+  try {
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      },
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents;
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
 // Funciones para enviar los datos a la tabla de "compras"
 
 async function postPurchase(url, item){
@@ -359,25 +381,23 @@ document.addEventListener('DOMContentLoaded', function () {
   // Función que permite realizar la compra (según el método de pago elegido)
 
 
-  async function makePurchase(url, array){
+  async function makePurchase(url, item){
+
+    let totalValue = cartTotal.innerHTML;
+    totalValue = totalValue.slice(4);
+    totalValue = parseInt(totalValue);
 
     if (creditCard.checked){
   
-      for (const item of array) {
-        await postPurchase(url, {user: item.user, id: item.id, name: item.name, unitCost: item.unitCost, currency: item.currency, count: item.count,
-          shipType: shipType.value, street: street.value, number: number.value, corner: corner.value, creditCardNumber: creditCardFields[0].value,
-          cvv: creditCardFields[1].value, expirationDate: creditCardFields[2].value, accountNumber: null
-        });
-      }
-  
+      await postPurchase(url, {idPurchase: item.idPurchase, user: item.user, shipType: shipType.value, street: street.value, number: number.value, corner: corner.value,
+        creditCardNumber: creditCardFields[0].value, cvv: creditCardFields[1].value, expirationDate: creditCardFields[2].value, accountNumber: null, totalCost: totalValue
+      });
+
     } else {
   
-      for (const item of array){
-        await postPurchase(url, {user: item.user, id: item.id, name: item.name, unitCost: item.unitCost, currency: item.currency, count: item.count,
-          shipType: shipType.value, street: street.value, number: number.value, corner: corner.value, creditCardNumber: null, cvv: null,
-          expirationDate: null, accountNumber: bankTransferFields[0].value
-        });
-      }
+      await postPurchase(url, {idPurchase: item.idPurchase, user: item.user, shipType: shipType.value, street: street.value, number: number.value,
+        corner: corner.value, creditCardNumber: null, cvv: null, expirationDate: null, accountNumber: bankTransferFields[0].value, totalCost: totalValue
+      });
   
     }
   
@@ -722,19 +742,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (validatePurchase()){
 
-    // Simula una compra exitosa
+      // Simula una compra exitosa
 
       cartArray = await getCart(CART_URL + localStorage.getItem("email"));
 
-      await makePurchase(CART_URL + "purchase", cartArray);
+      // Enviamos los datos a la tabla "purchases"
 
-      await deleteCartProducts(CART_URL + localStorage.getItem("email"));
+      await makePurchase(CART_URL + "purchase", cartArray[0]);
+
+      // Seteamos el valor de compra en 1 para que no se sigan mostrando en el carrito
+
+      await putItemsBought(CART_URL + localStorage.getItem("email"));
 
       const content = await buyMessage(CART_URL);
 
       const message = document.createElement("div");
       message.innerHTML =
-      `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+      `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
         ${content}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>`;

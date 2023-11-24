@@ -11,7 +11,7 @@ mariadb.createPool({
 });
 
 
-// Funcion que retorna los items del carrito que coinciden con el usuario 
+// Funcion que retorna los items del carrito que coinciden con el usuario y no han sido comprados
 
 const getItemsByUser = async (user) => {
 
@@ -21,7 +21,7 @@ const getItemsByUser = async (user) => {
         conn = await pool.getConnection();
 
         const rows = await conn.query(
-            `SELECT * FROM cart WHERE user = ?`, [user]
+            `SELECT * FROM cart WHERE user = ? AND bought = 0`, [user]
         );
 
         if (rows.length == 0){
@@ -48,7 +48,7 @@ const getItemByUserAndProduct = async (user, id) => {
         conn = await pool.getConnection();
 
         const row = await conn.query(
-            `SELECT * FROM cart WHERE user = ? AND id = ?`, [user, id]
+            `SELECT * FROM cart WHERE user = ? AND id = ? AND bought = 0`, [user, id]
         );
 
         if (row.length == 0){
@@ -62,6 +62,32 @@ const getItemByUserAndProduct = async (user, id) => {
         if (conn) conn.release();
     }
     return [{message: "Se produjo un error."}];
+
+}
+
+const getIDPurchase = async (user) => {
+
+    let conn;
+    try {
+        
+        conn = await pool.getConnection();
+
+        const rows = await conn.query(
+            `SELECT * FROM cart WHERE user = ? AND bought = 1 ORDER BY idPurchase DESC`, [user]
+        );
+
+        if (rows[0].idPurchase == undefined){
+            return {message: "No has realizado ninguna compra"};
+        }
+
+        return rows[0].idPurchase;
+
+    } catch (error) {
+        
+    }finally {
+        if (conn) conn.release();
+    }
+    return {message: "Se produjo un error."};
 
 }
 
@@ -81,8 +107,8 @@ const postItem = async (item) => {
         }
 
         const insert = await conn.query(
-            `INSERT INTO cart (id, user, name, unitCost, currency, count, image) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [item.id, item.user, item.name, item.unitCost, item.currency, item.count, item.image]
+            `INSERT INTO cart (idPurchase, id, user, name, unitCost, currency, count, image, bought) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [item.idPurchase, item.id, item.user, item.name, item.unitCost, item.currency, item.count, item.image, 0]
         );
         
         const row = await getItemByUserAndProduct(item.user, item.id);
@@ -107,11 +133,11 @@ const postPurchaseItem = async (item) => {
         conn = await pool.getConnection();
 
         const insert = await conn.query(
-            `INSERT INTO purchases (user, product, name, unitCost, currency, count, shipType,
-            street, number, corner, creditCardNumber, cvv, expirationDate, accountNumber)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [item.user, item.id, item.name, item.unitCost, item.currency, item.count, item.shipType, item.street,
-            item.number, item.corner, item.creditCardNumber, item.cvv, item.expirationDate, item.accountNumber]
+            `INSERT INTO purchases (idPurchase, user, shipType, street, number,
+            corner, creditCardNumber, cvv, expirationDate, accountNumber, totalCost)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [item.idPurchase, item.user, item.shipType, item.street, item.number, item.corner,
+            item.creditCardNumber, item.cvv, item.expirationDate, item.accountNumber, item.totalCost]
         );
 
         return [{message: "Compra realizada de manera exitosa."}];
@@ -134,11 +160,36 @@ const putItem = async (item, user, id) => {
         conn = await pool.getConnection();
 
         const insert = await conn.query(
-            `UPDATE cart SET count = ? WHERE user = ? AND id = ?`,
+            `UPDATE cart SET count = ? WHERE user = ? AND id = ? AND bought = 0`,
             [item.count, user, id]
         );
         
         const row = await getItemByUserAndProduct(user, id);
+
+        return row;
+    } catch (error) {
+        
+    }finally {
+        if (conn) conn.release();
+    }
+    return [{message: "Se produjo un error."}];
+
+}
+
+// Función que actualiza el atributo "bought" de todos los items de un usuario
+
+const putItemsBought = async (user) => {
+
+    let conn;
+    try {
+        
+        conn = await pool.getConnection();
+
+        const insert = await conn.query(
+            `UPDATE cart SET bought = 1 WHERE user = ? AND bought = 0`, [user]
+        );
+        
+        const row = await getItemsByUser(user);
 
         return row;
     } catch (error) {
@@ -165,36 +216,8 @@ const deleteItem = async (user, id) => {
 
         // Quitamos el item de la base de datos
 
-        const deleteUser = await conn.query(`DELETE FROM cart WHERE user = ? AND id = ?`, [user, id]);
+        const deleteUser = await conn.query(`DELETE FROM cart WHERE user = ? AND id = ? AND bought = 0`, [user, id]);
     
-        return row;
-
-    } catch(error) {
-    } finally {
-        if (conn) conn.release();
-    }
-
-    return [{message: "Se produjo un error."}];
-
-}
-
-// Funcion que elimina a un item del carrito que coincide con el user y el id indicado.
-
-const deleteItemsByUser = async (user) => {
-
-    let conn;
-    try {
-
-        conn = await pool.getConnection();
-
-        // Guardamos los items a eliminar
-
-        const row = await getItemsByUser(user);
-
-        // Quitamos los items de la base de datos
-
-        const deleteUser = await conn.query(`DELETE FROM cart WHERE user = ?`, [user]);
-
         return row;
 
     } catch(error) {
@@ -213,9 +236,10 @@ const deleteItemsByUser = async (user) => {
 module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
+    getIDPurchase,
     postItem,
     postPurchaseItem,
     putItem,
+    putItemsBought,
     deleteItem,
-    deleteItemsByUser
 }
