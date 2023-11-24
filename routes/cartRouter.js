@@ -14,4 +14,10 @@ cartRouter.put("/:user/:id", cartController.putItem)
 
 cartRouter.delete("/:user/:id", cartController.deleteItem);
 
+cartRouter.delete("/:user", cartController.deleteItemsByUser);
+
+// Ruta en la que realizamos la compra del producto
+
+cartRouter.post("/purchase", cartController.postPurchaseItem);
+
 module.exports = cartRouter;

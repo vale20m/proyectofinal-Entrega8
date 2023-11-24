@@ -2,7 +2,7 @@
 
 // API que tiene el valor de las divisas actualizado
 
-const URL_CURRENCIES = "https://v6.exchangerate-api.com/v6/b0fca623d878533edbdf61b4/latest/USD";
+const URL_CURRENCIES = "https://v6.exchangerate-api.com/v6/c94b63afd58937412a283930/latest/USD";
 
 const cartItems = document.querySelector("#cartItems");
 
@@ -178,6 +178,8 @@ function showCartItems(array){
 
 }
 
+// Variable para manejar los items del carrito
+
 let cartArray;
 
 // Variable que contendra los distintos cambios de varias monedas a peso uruguayo
@@ -201,11 +203,37 @@ async function showCart() {
 
 showCart();
 
+async function buyMessage(url){
+
+  try {
+    
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      }
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents.msg;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
 async function getCart(url){
 
   try {
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      }
+    });
     const responseContents = await response.json();
 
     return responseContents;
@@ -226,19 +254,23 @@ async function getCurrencies(url){
     return responseContentsCurrencies.conversion_rates.UYU;
   
   } catch (error) {
-    console.log(message.error);
+    console.log(error.message);
   }
 
 }
 
-// FUNCION QUE ELIMINA UN ITEM DEL LOCAL STORAGE
+// Función que elimina uno o todos los items del carrito de un usuario
 
 async function deleteCartProducts(url){
 
   try {
     
     const response = await fetch(url, {
-      method: "DELETE"
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      }
     });
 
     const responseContents = await response.json();
@@ -251,6 +283,8 @@ async function deleteCartProducts(url){
 
 }
 
+// Función que permite modificar la cantidad de un producto del carrito (en la base de datos)
+
 async function modifyCount(url, count){
 
   try {
@@ -259,15 +293,46 @@ async function modifyCount(url, count){
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
       },
       body: JSON.stringify(count)
     });
+
+    const responseContents = await response.json();
+
+    return responseContents;
     
   } catch (error) {
     console.log(error.message);
   }
 
 }
+
+// Funciones para enviar los datos a la tabla de "compras"
+
+async function postPurchase(url, item){
+
+  try {
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
+      },
+      body: JSON.stringify(item)
+    });
+
+    const responseContents = await response.json();
+
+    return responseContents;
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
 
 shipType.addEventListener("change", () => updateQuantities(cartArray));
 
@@ -281,10 +346,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Guardamos en constantes los elementos de HTML que necesitamos para el funcionamiento del form
 
+  const street = document.querySelector("#street");
+  const number = document.querySelector("#number");
+  const corner = document.querySelector("#corner");
+
   const creditCard = document.getElementById('creditCard');
   const bankTransfer = document.getElementById('bankTransfer');
   const creditCardFields = document.getElementById("creditCardFields").getElementsByTagName("input");
   const bankTransferFields = document.getElementById("bankTransferFields").getElementsByTagName("input");
+
+
+  // Función que permite realizar la compra (según el método de pago elegido)
+
+
+  async function makePurchase(url, array){
+
+    if (creditCard.checked){
+  
+      for (const item of array) {
+        await postPurchase(url, {user: item.user, id: item.id, name: item.name, unitCost: item.unitCost, currency: item.currency, count: item.count,
+          shipType: shipType.value, street: street.value, number: number.value, corner: corner.value, creditCardNumber: creditCardFields[0].value,
+          cvv: creditCardFields[1].value, expirationDate: creditCardFields[2].value, accountNumber: null
+        });
+      }
+  
+    } else {
+  
+      for (const item of array){
+        await postPurchase(url, {user: item.user, id: item.id, name: item.name, unitCost: item.unitCost, currency: item.currency, count: item.count,
+          shipType: shipType.value, street: street.value, number: number.value, corner: corner.value, creditCardNumber: null, cvv: null,
+          expirationDate: null, accountNumber: bankTransferFields[0].value
+        });
+      }
+  
+    }
+  
+  }
+
 
 
   // Función que actualiza el texto según la forma de pago elegida
@@ -350,10 +448,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const currentYear = new Date().getFullYear() % 100;
-    console.log (currentYear);
     
     const currentMonth = new Date().getMonth() + 1; 
-    console.log (currentMonth);
 
     // Valida el año (debe ser mayor o igual al año y mes actual)
     if (yearNumber > currentYear || (yearNumber == currentYear && monthNumber >= currentMonth)) {
@@ -434,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const form = document.querySelector("#form");
 
-  purchaseButton.addEventListener("click", event => {
+  purchaseButton.addEventListener("click", async function(event) {
 
 
 
@@ -628,17 +724,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Simula una compra exitosa
 
-      const successBanner = document.getElementById('successBanner');
-      successBanner.classList.remove("d-none");
-      successBanner.classList.add("d-block");
+      cartArray = await getCart(CART_URL + localStorage.getItem("email"));
+
+      await makePurchase(CART_URL + "purchase", cartArray);
+
+      await deleteCartProducts(CART_URL + localStorage.getItem("email"));
+
+      const content = await buyMessage(CART_URL);
+
+      const message = document.createElement("div");
+      message.innerHTML =
+      `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+        ${content}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+
+      document.body.appendChild(message);
+
 
       setTimeout(function () {
 
-        successBanner.classList.remove("d-block");
-        successBanner.classList.add("d-none");
         form.submit();
       
-      }, 4000);
+      }, 5000);
 
     }
 
@@ -647,10 +755,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Función que realiza las validaciones del método de pago, devolviendo true en caso de que no haya errores
 
   function validatePurchase() {
-
-    const street = document.querySelector("#street");
-    const number = document.querySelector("#number");
-    const corner = document.querySelector("#corner");
 
     const selectionText = document.getElementById('selectionText');
     const cartItems = document.querySelectorAll('.list-group-item');
@@ -761,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    if (localStorage.getItem("cartItems") == "[]" || localStorage.getItem("cartItems") == undefined){
+    if (cartArray.length == 0){
 
       const message = document.createElement("div");
       message.innerHTML =

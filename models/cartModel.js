@@ -11,7 +11,7 @@ mariadb.createPool({
 });
 
 
-// Funcion que retorna el item del carrito que coinciden con el usuario 
+// Funcion que retorna los items del carrito que coinciden con el usuario 
 
 const getItemsByUser = async (user) => {
 
@@ -97,6 +97,33 @@ const postItem = async (item) => {
 
 }
 
+// Función que permite realizar la compra del producto (lo envia a otra tabla de la base de datos)
+
+const postPurchaseItem = async (item) => {
+
+    let conn;
+    try {
+        
+        conn = await pool.getConnection();
+
+        const insert = await conn.query(
+            `INSERT INTO purchases (user, product, name, unitCost, currency, count, shipType,
+            street, number, corner, creditCardNumber, cvv, expirationDate, accountNumber)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [item.user, item.id, item.name, item.unitCost, item.currency, item.count, item.shipType, item.street,
+            item.number, item.corner, item.creditCardNumber, item.cvv, item.expirationDate, item.accountNumber]
+        );
+
+        return [{message: "Compra realizada de manera exitosa."}];
+    } catch (error) {
+        
+    }finally {
+        if (conn) conn.release();
+    }
+    return [{message: "Se produjo un error."}];
+
+}
+
 // Función que modifica la cantidad de un item especificado
 
 const putItem = async (item, user, id) => {
@@ -123,7 +150,7 @@ const putItem = async (item, user, id) => {
 
 }
 
-// Funcion que elimina a un usuario que coincide con el email indicado.
+// Funcion que elimina a un item del carrito que coincide con el user y el id indicado.
 
 const deleteItem = async (user, id) => {
 
@@ -131,6 +158,8 @@ const deleteItem = async (user, id) => {
     try {
   
         conn = await pool.getConnection();
+
+        // Guardamos el item a eliminar
 
         const row = await getItemByUserAndProduct(user, id);
 
@@ -149,12 +178,44 @@ const deleteItem = async (user, id) => {
 
 }
 
+// Funcion que elimina a un item del carrito que coincide con el user y el id indicado.
+
+const deleteItemsByUser = async (user) => {
+
+    let conn;
+    try {
+
+        conn = await pool.getConnection();
+
+        // Guardamos los items a eliminar
+
+        const row = await getItemsByUser(user);
+
+        // Quitamos los items de la base de datos
+
+        const deleteUser = await conn.query(`DELETE FROM cart WHERE user = ?`, [user]);
+
+        return row;
+
+    } catch(error) {
+    } finally {
+        if (conn) conn.release();
+    }
+
+    return [{message: "Se produjo un error."}];
+
+}
+
+
+
 // Exportamos las funciones
 
 module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
     postItem,
+    postPurchaseItem,
     putItem,
-    deleteItem
+    deleteItem,
+    deleteItemsByUser
 }

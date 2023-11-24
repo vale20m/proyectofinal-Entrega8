@@ -27,6 +27,13 @@ const postItem = async (req, res) => {
 
 }
 
+const postPurchaseItem = async (req, res) => {
+
+    const item = await cartModel.postPurchaseItem(req.body);
+    res.json(item[0]);
+
+}
+
 // Manejamos las peticiones PUT
 
 const putItem = async (req, res) => {
@@ -45,10 +52,19 @@ const deleteItem = async (req, res) => {
 
 }
 
+const deleteItemsByUser = async (req, res) => {
+
+    const items = await cartModel.deleteItemsByUser(req.params.user);
+    res.json(items);
+
+}
+
 module.exports = {
     getItemsByUser,
     getItemByUserAndProduct,
     postItem,
     putItem,
-    deleteItem
+    deleteItem,
+    deleteItemsByUser,
+    postPurchaseItem
 }

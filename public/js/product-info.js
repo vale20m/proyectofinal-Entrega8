@@ -138,8 +138,6 @@ async function getProducts (url){
 
         const message = document.createElement("div");
 
-        console.log(response);
-
         if (response.message == undefined){
 
           message.innerHTML = 
@@ -241,14 +239,7 @@ async function getProducts (url){
 
   } catch (error) {
 
-    const message = document.createElement("div");
-    message.innerHTML =
-    `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-    HTTP ERROR: ${response.status}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
-
-    document.body.appendChild(message);
+    console.log(error.message);
     
   }
 }
@@ -374,18 +365,7 @@ async function getProductComments(url) {
     }
 
   } catch (error) {
-
-    console.error("Error:", error);
-
-    const message = document.createElement("div");
-    message.innerHTML =
-    `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-    Error al cargar los comentarios.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
-
-    document.body.appendChild(message);
-
+    console.log(error.message);
   }
 
 }
@@ -420,42 +400,42 @@ sendCommentButton.addEventListener("click", async function () {
 
     if (check.message == undefined){
 
-    const listItem = document.createElement("li");
-    listItem.classList.add("list-group-item");
+      const listItem = document.createElement("li");
+      listItem.classList.add("list-group-item");
 
-    // Crea un elemento para mostrar la puntuación en forma de estrellas
+      // Crea un elemento para mostrar la puntuación en forma de estrellas
 
-    const starsContainer = showStars(score);
+      const starsContainer = showStars(score);
 
-    const userElement = document.createElement("span");
-    userElement.classList.add("fw-bold");
-    userElement.textContent = userEmail;
+      const userElement = document.createElement("span");
+      userElement.classList.add("fw-bold");
+      userElement.textContent = userEmail;
 
-    // Agregar el correo del usuario, la fecha y las estrellas al elemento de lista
+      // Agregar el correo del usuario, la fecha y las estrellas al elemento de lista
 
-    const comment = ` - ${dateTime} - `;
-    listItem.appendChild(userElement);
-    listItem.innerHTML += comment;
-    listItem.appendChild(starsContainer);
+      const comment = ` - ${dateTime} - `;
+      listItem.appendChild(userElement);
+      listItem.innerHTML += comment;
+      listItem.appendChild(starsContainer);
 
-    listItem.appendChild(document.createElement("br"));
+      listItem.appendChild(document.createElement("br"));
 
-    const commentElement = document.createElement("span");
-    commentElement.classList.add("fw-light", "text-break");
-    commentElement.textContent = commentText.value;
+      const commentElement = document.createElement("span");
+      commentElement.classList.add("fw-light", "text-break");
+      commentElement.textContent = commentText.value;
 
-    listItem.appendChild(commentElement);
+      listItem.appendChild(commentElement);
 
-    commentsContainer.appendChild(listItem);
+      commentsContainer.appendChild(listItem);
 
-    commentText.value = "";
-    commentScore.value = 1;
+      commentText.value = "";
+      commentScore.value = 1;
 
-    message.innerHTML =
-    `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
-    ¡Gracias por tu comentario!
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
+      message.innerHTML =
+      `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+      ¡Gracias por tu comentario!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
 
     } else {
 
@@ -531,6 +511,7 @@ async function saveProductProperties(url, product) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "access-token": localStorage.getItem("token"),
       },
       body: JSON.stringify(product)
     });
