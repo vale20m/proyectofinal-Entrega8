@@ -212,8 +212,6 @@ async function showCart() {
 
 }
 
-showCart();
-
 // Función que devuelve el mensaje de "compra existosa" del JSON
 
 async function buyMessage(url){
@@ -388,6 +386,7 @@ shipType.addEventListener("change", async function(){
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  showCart();
 
   // Guardamos en constantes los elementos de HTML que necesitamos para el funcionamiento del form
 
@@ -789,6 +788,8 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>`;
 
       document.body.appendChild(message);
+
+      purchaseButton.disabled = true;
 
 
       setTimeout(function () {

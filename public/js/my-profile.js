@@ -127,6 +127,8 @@ document.addEventListener("DOMContentLoaded", function () {
       
       document.body.appendChild(message);
 
+      submitButton.disabled = true;
+
       setTimeout( () => {
         profileForm.submit();
       }, 3000);
