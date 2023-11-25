@@ -163,7 +163,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
     profile.innerHTML = localStorage.getItem("email");
     loginButton.addEventListener("click", function(){
-        localStorage.clear();
+        localStorage.removeItem("email");
+        localStorage.removeItem("productID");
+        localStorage.removeItem("token");
+        localStorage.removeItem("catID");
         loginButton.href = "index.html";
     });
 

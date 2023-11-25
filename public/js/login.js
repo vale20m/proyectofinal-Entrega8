@@ -242,8 +242,20 @@ sendLogin.addEventListener("click", async function(event){
     event.preventDefault();
 
     if (loginForm.checkValidity()){
-        const bool = await searchUser(LOGIN_URL + email.value + "/" + password.value);
-        if (bool){
+
+        const message = document.createElement("div");
+        const user = await searchUser(LOGIN_URL + email.value);
+
+        if (user.password == password.value){
+
+            message.innerHTML =
+            `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+            Has iniciado sesion exitosamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+
+            document.body.appendChild(message);
+
             localStorage.setItem("email", email.value);
             const token = await getToken(LOGIN_URL + "verify", {email: email.value, password: password.value});
             localStorage.setItem("token", token);
@@ -253,7 +265,27 @@ sendLogin.addEventListener("click", async function(event){
             setTimeout(() => {
                 window.location.href = "index.html";
             }, "2000");
+
+        } else {
+
+            if (user.message != undefined){
+                message.innerHTML =
+                `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+                    ${user.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+            } else {
+                message.innerHTML =
+                `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+                    La contraseña es incorrecta.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`;
+            }
+
+            document.body.appendChild(message);
+        
         }
+
     }
 
 });
@@ -266,39 +298,11 @@ async function searchUser(url){
 
         const responseContents = await response.json();
 
-        const message = document.createElement("div");
-
-        if (responseContents.email == undefined){
-
-            message.innerHTML =
-            `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
-            ${responseContents.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`;
-
-            document.body.appendChild(message);
-
-            return false;
-
-        } else {
-
-            message.innerHTML =
-            `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
-            Has iniciado sesion exitosamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>`;
-
-            document.body.appendChild(message);
-
-            return true;
-        
-        }
+        return responseContents;
 
     } catch (error) {
         console.log(error.message);
     }
-
-    return false;
 
 }
 

@@ -4,7 +4,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const userRouter = express.Router();
 
-userRouter.get("/:email/:password", userController.getUserByEmail);
+userRouter.get("/:email", userController.getUserByEmail);
 
 userRouter.post("/", userController.postUser);
 
@@ -12,6 +12,6 @@ userRouter.post("/verify", userController.verifyUser);
 
 userRouter.put("/", userController.putUserPassword);
 
-userRouter.delete("/", userController.deleteUser);
+userRouter.put("/user_data", userController.putUserData);
 
 module.exports = userRouter;

@@ -18,28 +18,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
   emailInput.value = emailTemp;
 
-  // En caso de que el usuario ya los haya llenado e ingrese nuevamente, se cargan los datos anteriores
+  // En caso de que el usuario ya los haya llenado e ingrese nuevamente, se cargan los datos anteriores de la base de datos
 
-  function loadInfo(){
+  async function getUserData(url){
 
-    const userProfile = JSON.parse(localStorage.getItem(emailTemp));
+    try {
+      
+      const response = await fetch(url);
 
-    if (userProfile) {
+      const responseContents = await response.json();
 
-      // Se rellenan los campos
+      return responseContents;
 
-      nameInput.value = userProfile.name;
-      secondNameInput.value = userProfile.secondName;
-      lastNameInput.value = userProfile.lastName;
-      secondLastNameInput.value = userProfile.secondLastName;
-      phoneInput.value = userProfile.phone;
+    } catch (error) {
+      console.log(error.message);
+    }
 
-      // Cargamos la imagen de perfil si existe.
+  }
 
-      if (userProfile.profileImage) {
-        const defaultProfileImage = document.getElementById("shownPicture");
-        defaultProfileImage.src = userProfile.profileImage;
-      }
+  async function putUserData(url, user){
+
+    try {
+      
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user)
+      });
+
+      const responseContents = response.json();
+
+      return responseContents;
+
+    } catch (error) {
+      console.log(error.message);
+    }
+
+  }
+
+  let profileImage = localStorage.getItem(emailTemp);
+
+  async function loadInfo(){
+
+    const userProfile = await getUserData(LOGIN_URL + emailTemp);
+
+    // Se rellenan los campos
+
+    nameInput.value = userProfile.name;
+    secondNameInput.value = userProfile.secondName;
+    lastNameInput.value = userProfile.lastName;
+    secondLastNameInput.value = userProfile.secondLastName;
+    phoneInput.value = userProfile.phone;
+
+    // Cargamos la imagen de perfil si existe.
+
+    if (profileImage) {
+      const defaultProfileImage = document.getElementById("shownPicture");
+      defaultProfileImage.src = profileImage;
     }
 
   }
@@ -51,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const profileForm = document.getElementById("profile-form");
   const submitButton = document.getElementById("submitButton");
 
-  submitButton.addEventListener("click", event => {
+  submitButton.addEventListener("click", function(event) {
     
     if (!profileForm.checkValidity()){
       event.preventDefault();
@@ -60,33 +97,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     profileForm.classList.add("was-validated");
 
-    const userEmail = emailInput.value;
-
     if (checkFields()){
 
-    // Si el correo de la cuenta actual coincide con el input, guardar los cambios en el `localStorage`
+    // Si el correo de la cuenta actual coincide con el input, guardar los cambios en la tabla users
 
       const userProfile = {
+        email: emailInput.value,
         name: nameInput.value,
         secondName: secondNameInput.value,
         lastName: lastNameInput.value,
         secondLastName: secondLastNameInput.value,
         phone: phoneInput.value,
-        
-        // Traemos la imagen del HTML y la guardamos
-
-        profileImage: document.getElementById("shownPicture").src
       };
 
-      // Guardar los datos del perfil en el `localStorage` utilizando el correo como clave
+      localStorage.setItem(emailTemp, document.getElementById("shownPicture").src);
 
-      localStorage.setItem(userEmail, JSON.stringify(userProfile));
+      // Guardar los datos del perfil en la base de datos utilizando el correo como clave
+
+      putUserData(LOGIN_URL + "user_data", userProfile);
 
       // Mostramos una alerta de que el perfil ha sido actualizado
 
       const message = document.createElement("div");
       message.innerHTML =
-      `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+      `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
         Datos del perfil actualizados exitosamente.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>`;

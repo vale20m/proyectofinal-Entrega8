@@ -13,7 +13,7 @@ mariadb.createPool({
 
 // Función que retorna el elemento de la tabla de usuarios que coincide con ese email (si la contraseña es correcta)
 
-const getUserByEmail = async (email, password) => {
+const getUserByEmail = async (email) => {
 
     let conn;
     try {
@@ -26,10 +26,6 @@ const getUserByEmail = async (email, password) => {
 
         if (row.length == 0){
             return [{message: "No existe un usuario con ese email en el sistema."}];
-        }
-
-        if (row[0].password != password){
-            return [{message: "La contraseña ingresada no es correcta."}];
         }
 
         return row;
@@ -92,7 +88,7 @@ const putUserPassword = async (user) => {
             return [{message: "No existe un usuario con ese email en el sistema."}];
         }
 
-        // Quitamos el elemento de la tabla
+        // Modificamos la contraseña
 
         const modifyPassword = await conn.query(`UPDATE users SET password = ? WHERE email = ?`, [user.password, user.email]);
     
@@ -107,36 +103,20 @@ const putUserPassword = async (user) => {
 
 }
 
-// Función que elimina a un usuario que coincide con el email indicado.
+// Función que establece el resto de datos del usuario
 
-const deleteUser = async (user) => {
+const putUserData = async (user) => {
 
     let conn;
     try {
   
         conn = await pool.getConnection();
 
-        // Chequeamos que el usuario exista, y lo mostramos en caso de que exista
+        const modifyUser = await conn.query(`UPDATE users SET name = ?, secondName = ?, lastName = ?,
+        secondLastName = ?, phone = ? WHERE email = ?`,
+        [user.name, user.secondName, user.lastName, user.secondLastName, user.phone, user.email]);
 
-        const row = await conn.query(`SELECT * FROM usuarios WHERE email = ?`, [user.email]);
-
-        if (row.length == 0){
-            return [{message: "No existe un usuario con ese email en el sistema."}];
-        }
-
-        // Chequeamos que la contraseña sea correcta
-
-        const check = await conn.query(`SELECT * FROM usuarios WHERE email = ? AND password = ?`, [user.email, user.password]);
-
-        if (check.length == 0){
-            return [{message: "La contraseña es incorrecta."}];
-        }
-
-        // Quitamos el elemento de la tabla
-
-        const deleteUser = await conn.query(`DELETE FROM usuarios WHERE email = ?`, [user.email, user.password]);
-    
-        return row;
+        return [{message: "Usuario actualizado exitosamente."}];
 
     } catch(error) {
     } finally {
@@ -153,5 +133,5 @@ module.exports = {
     getUserByEmail,
     postUser,
     putUserPassword,
-    deleteUser
+    putUserData
 }

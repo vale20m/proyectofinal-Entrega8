@@ -9,7 +9,7 @@ const CLAVE_SECRETA = "CLAVE SUPER SECRETA";
 
 const getUserByEmail = async (req, res) => {
 
-    const user = await userModel.getUserByEmail(req.params.email, req.params.password);
+    const user = await userModel.getUserByEmail(req.params.email);
     res.json(user[0]);
 
 }
@@ -46,19 +46,18 @@ const putUserPassword = async (req, res) => {
 
 }
 
-// Manejamos las peticiones DELETE
+const putUserData = async (req, res) => {
 
-const deleteUser = async (req, res) => {
-
-    const user = await userModel.deleteUser(req.body);
-    res.json(user[0]);
+    const message = await userModel.putUserData(req.body);
+    res.json(message[0]);
 
 }
+
 
 module.exports = {
     getUserByEmail,
     postUser,
     verifyUser,
     putUserPassword,
-    deleteUser
+    putUserData
 }
