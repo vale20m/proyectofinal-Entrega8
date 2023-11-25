@@ -508,7 +508,17 @@ document.addEventListener('DOMContentLoaded', function () {
   expirationDateInput.addEventListener('blur', function() {
     if (!isValidDate(this)) {
 
-      alert('Fecha de vencimiento no válida. Por favor ingrese una fecha válida.');
+      const modal = document.querySelector("#paymentModal");
+
+      const message = document.createElement("div");
+      message.innerHTML =
+      `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+        Fecha de vencimiento inválida. Por favor, ingrese una fecha válida.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+
+      modal.appendChild(message);
+
       this.value = '';
       
     }
