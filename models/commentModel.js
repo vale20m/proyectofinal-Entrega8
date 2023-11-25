@@ -96,51 +96,11 @@ const postComment = async (comment) => {
 
 }
 
-// Funcion que elimina a un usuario que coincide con el email indicado.
-
-const deleteUser = async (user) => {
-
-    let conn;
-    try {
-  
-        conn = await pool.getConnection();
-
-        // Chequeamos que el usuario exista, y lo mostramos en caso de que exista
-
-        const row = await conn.query(`SELECT * FROM usuarios WHERE email = ?`, [user.email]);
-
-        if (row.length == 0){
-            return [{message: "No existe un usuario con ese email en el sistema."}];
-        }
-
-        // Chequeamos que la contraseña sea correcta
-
-        const check = await conn.query(`SELECT * FROM usuarios WHERE email = ? AND password = ?`, [user.email, user.password]);
-
-        if (check.length == 0){
-            return [{message: "La contraseña es incorrecta."}];
-        }
-
-        // Quitamos el elemento de la tabla
-
-        const deleteUser = await conn.query(`DELETE FROM usuarios WHERE email = ?`, [user.email, user.password]);
-    
-        return row;
-
-    } catch(error) {
-    } finally {
-        if (conn) conn.release();
-    }
-
-    return [{message: "Se produjo un error."}];
-
-}
 
 // Exportamos las funciones
 
 module.exports = {
     getCommentsByProductID,
     getCommentByUserAndProductID,
-    postComment,
-    deleteUser
+    postComment
 }

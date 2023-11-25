@@ -12,6 +12,7 @@ const container = document.getElementById("productInfo");
 const relatedProducts = document.getElementById("relatedProducts");
 
 function showData(product) {
+
   container.innerHTML += `
   <div class="row col-11 mx-auto"><h1 class="my-3 text-uppercase col-lg-8 col-md-7 col-12">${product.name}</h1>
   <div class="col-lg-1 col-md-2 col-3"><a role="button" id="wishlist" class="fs-1 btn mt-lg-0 mt-md-3">❤</a></div>
@@ -23,6 +24,7 @@ function showData(product) {
   <p class="fs-4">Imágenes meramente ilustrativas: </p> <br>`;
 
   // Carrusel de imágenes
+
   const carouselInner = document.querySelector("#productImageCarousel .carousel-inner");
 
   for (let i = 0; i < product.images.length; i++) {
@@ -33,18 +35,18 @@ function showData(product) {
       </div>`;
   }
 
-  // LLAMAMOS A LA FUNCION PARA MOSTRAR LOS PRODUCTOS RELACIONADOS
+  // Llamamos a la función para mostrar los productos relacionados
 
   showRelatedProducts(product);
 
 }
 
 
-// FUNCION PARA MOSTRAR LOS PRODUCTOS RELACIONADOS
+// Función para mostrar los productos relacionados
 
 function showRelatedProducts(product){
   
-  // MOSTRAMOS LOS PRODUCTOS RELACIONADOS CON EL PRODUCTO ACTUAL
+  // Mostramos los productos relacionados con el producto actual
   
   for (const related of product.relatedProducts) {
 
@@ -58,48 +60,13 @@ function showRelatedProducts(product){
 
 }
 
-// FUNCION PARA MOSTRAR UNO DE LOS PRODUCTOS RELACIONADOS AL SELECCIONARLO
+// Funcion que redirige al usuario a la pagina de un producto al hacer click sobre el
 
 function getRelatedProduct(productID){
   localStorage.setItem("productID", productID);
   window.location = "product-info.html";
 }
 
-// FUNCION PARA CAMBIAR EL COLOR DE FONDO
-
-function changeBackground(){
-
-  const whiteItems1 = document.getElementsByClassName("shadow");
-  const whiteItems2 = document.getElementsByClassName("card");
-
-  if (localStorage.getItem("screenMode") == "light" || localStorage.getItem("screenMode") == undefined){
-  
-    document.body.classList.remove("bg-dark", "text-white");
-    switchMode.innerHTML = "Modo noche";
-
-    for (const item of whiteItems1) {
-      item.classList.remove("text-dark");
-    }
-    for (const item of whiteItems2) {
-      item.classList.remove("text-dark");
-    }
-
-  }
-  
-  if (localStorage.getItem("screenMode") == "dark"){
-
-    document.body.classList.add("bg-dark", "text-white");
-    switchMode.innerHTML = "Modo día";
-
-    for (const item of whiteItems1) {
-      item.classList.add("text-dark");
-    }
-    for (const item of whiteItems2) {
-      item.classList.add("text-dark");
-    }
-
-  }
-}
 
 // Función que permite tomar el producto actual y guardarlo en la base de datos al precionar "Comprar", asi como agregarlo a la Wishlist y cambiar el color de fondo adecuadamente
 
@@ -114,11 +81,11 @@ async function getProducts (url){
 
     changeBackground();
     
-    // GUARDAMOS EL BOTON DE COMPRAR EN UNA VARIABLE
+    // Guardamos el boton de comprar en una variable
 
     const buyProduct = document.querySelector("#buyProduct");
 
-    // ANIDAMOS UN ADD EVENT LISTENER AL MISMO QUE SE ACTIVA CUANDO RECIBE UN CLICK Y GUARDA EL PRODUCTO EN EL LOCAL STORAGE
+    // Anidamos un addEventListener al mismo que se activa cuando recibe un click y guarda el producto en la base de datos
 
     buyProduct.addEventListener("click", async function(){
 
@@ -126,15 +93,13 @@ async function getProducts (url){
 
       if (userEmail != undefined){
 
-        let idPurchase = await getIDProduct(ID_PURCHASE_URL + userEmail);
+        // Guardamos en una variable el id de compra del elemento que el usuario quiere agregar a su carrito (si nunca ha comprado nada se establece en 1)
 
-        console.log(idPurchase);
+        let idPurchase = await getIDProduct(ID_PURCHASE_URL + userEmail);
 
         if (idPurchase.message != undefined){
 
           idPurchase = await getCart(CART_URL + userEmail);
-
-          console.log(idPurchase);
 
           if (idPurchase[0].message != undefined){
             idPurchase = 1;
@@ -164,7 +129,7 @@ async function getProducts (url){
         if (response.message == undefined){
 
           message.innerHTML = 
-          `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+          `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
             El producto se ha agregado al carrito.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>`;
@@ -199,7 +164,7 @@ async function getProducts (url){
 
     const wishlistButton = document.querySelector("#wishlist");
 
-    // ADD EVENT LISTENER QUE ACTUALIZA EL BOTON DE CORAZON AL CAMBIAR EL MODO DE PANTALLA
+    // addEventListener que actualiza el boton de corazon al cambiar el modo de pantalla
 
     switchMode.addEventListener("click", function(){
       if (localStorage.getItem("screenMode") == undefined || localStorage.getItem("screenMode") == "light"){
@@ -215,7 +180,7 @@ async function getProducts (url){
 
     await checkActive(WISHLIST_URL + userEmail + "/" + responseContents.id, wishlistButton);
 
-    // ADD EVENT LISTENER QUE AGREGA UN PRODUCTO A LA WISHLIST AL CLIQUEAR EL CORAZON (O LO QUITA SI YA ESTABA AGREGADO)
+    // addEventListener que agrega un producto a la wishlist al cliquear el corazón (o lo quita si ya estaba agregado)
 
     wishlistButton.addEventListener("click", function(){
 
@@ -568,8 +533,10 @@ async function getIDProduct(url){
 
 }
 
-// ENTREGA 5: FUNCIONALIDAD PARA GUARDAR PROPIEDADES DEL PRODUCTO SELECCIONADO EN EL LOCAL STORAGE
-// NO LO GUARDA SI EL MISMO USUARIO INTENA GUARDAR EL MISMO ITEM
+/*
+Entrega 5: funcionalidad para guardar propiedades del producto seleccionado en la
+base de datos, pero no lo guarda si el mismo usuario intena guardar el mismo item
+*/
 
 async function saveProductProperties(url, product) {
 
@@ -638,7 +605,7 @@ async function deleteWishlistProduct(url){
 
 }
 
-// FUNCION QUE ANALIZA SI EL PRODUCTO ACTUAL ESTA EN EL LOCAL STORAGE Y, EN CASO DE ESTAR, COLOREA EL CORAZON DE ROJO
+// Analizamos si el producto actual esta en la wishlist del usuario y, en caso de estar, coloreamos el corazon de rojo
 
 async function checkActive (url, button){
 
@@ -664,7 +631,7 @@ async function checkActive (url, button){
 
 }
 
-// FUNCION QUE ANALIZA EL MODO DE PANTALLA ACTUAL, Y EN BASE A ESO CAMBIA EL COLOR DEL BOTON (SIN COLOREAR DE ROJO)
+// Función que analiza el modo de pantalla actual, y en base a eso cambia el color del boton (sin colorear de rojo)
 
 function checkLocalStorage(button){
 

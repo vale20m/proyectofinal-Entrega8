@@ -1,4 +1,4 @@
-// CONSTANTES PARA EL FUNCIONAMIENTO DE TODO EL CODIGO (URL Y CONTENEDORES DE HTML)
+// Constantes para el funcionamiento de todo el codigo (url y contenedores de html)
 
 // API que tiene el valor de las divisas actualizado
 
@@ -8,8 +8,10 @@ const cartItems = document.querySelector("#cartItems");
 
 const cartControls = document.querySelector("#cartControls");
 
-// FUNCION QUE CALCULA EL SUBTOTAL DEL PRODUCTO EN EL CARRITO, MULTIPLICANDO SU
-// PRECIO POR LACANTIDAD, Y AGREGANDO LA MONEDA AL COMIENZO (DEVOLVIENDO UN SITRING)
+/*
+Función que calcula el subtotal del producto en el carrito, multiplicando su
+precio por lacantidad, y agregando la moneda al comienzo (devolviendo un sitring)
+*/
 
 function calculateSubtotal(string, num1, num2){
     const x = num1 * num2;
@@ -89,11 +91,13 @@ function updateQuantities(array){
 function showCartItems(array){
 
   // Agregamos un if para que las opciones de compra no se muestren si no hay items en el carrito
+  
   if (array.length < 1){
     cartControls.classList.add("d-none");
   }
 
-  // SECCIÓN QUE FUNCIONA COMO "TÍTULO" DE LA TABLA DEL CARRITO
+  // Sección que funciona como "título" de la tabla del carrito
+  
   cartItems.innerHTML += 
   `<div class="row">
       <div class="col-md-3 d-md-block d-none"></div>
@@ -107,6 +111,7 @@ function showCartItems(array){
     const quantityInputId = `quantityInput_${item.id}`; // Crea un ID único para cada campo de cantidad
   
     // Crea el elemento div y agrega clases de validación y un mensaje de error
+    
     div.innerHTML = `
       <div class="list-group-item border rounded">
         <div class="row mx-auto">
@@ -116,7 +121,7 @@ function showCartItems(array){
           <h4 class="col-md-2 col-sm-4 d-sm-block d-none my-auto">${item.currency} ${item.unitCost}</h4>
           <h4 class="d-md-none col-sm-3 offset-sm-0 col-5 offset-1 my-md-auto mt-sm-3 mt-3">Cantidad: </h4>
           <div class="col-md-2 col-sm-3 col-6 my-md-auto mt-3 mt-2">
-            <input type="number" class="form-control w-75 ${item.count <= 0 ? 'is-invalid' : ''}" id="${quantityInputId}" value="${item.count}" min="1">
+            <input type="number" class="form-control w-75 ${item.count <= 0 ? 'is-invalid' : ''}" id="${quantityInputId}" value="${item.count}" min="0">
             <div class="invalid-feedback">La cantidad debe ser mayor que 0</div> <!-- Mensaje de error --></div>
           <h4 class="d-md-none col-sm-3 offset-sm-0 col-5 offset-1 my-md-auto mt-sm-3 mt-2">Subtotal: </h4>
           <h4 id="subtotal" class="col-md-2 col-sm-3 col-6 my-md-auto mt-2">${calculateSubtotal(item.currency, item.unitCost, item.count)}</h4></div>
@@ -125,8 +130,10 @@ function showCartItems(array){
       </div>`;
 
 
-    // AGREGAMOS UN ADD EVENT LISTENER QUE SE ACTIVA CUANTO SE HACE CLICK EN EL BOTON "CERRAR"
-    // DE UN ITEM DEL CARRITO, ELIMINANDOLO DEL LOCAL STORAGE
+    /*
+    Agregamos un add event listener que se activa cuanto se hace click en el boton 
+    "cerrar" de un item del carrito, eliminandolo del local storage
+    */
 
     const closeButton = div.querySelector("#closeButton");
 
@@ -142,8 +149,10 @@ function showCartItems(array){
         
     });
 
-    // ANIDAMOS UN ADD EVENT LISTENER AL ELEMENTO "INPUT", EL CUAL EJECUTA UNA FUNCION
-    // QUE MODIFICA EL SUBTOTAL DEL PRODUCTO CADA VEZ QUE SE MODIFICA EL VALOR DE DICHO INPUT.
+    /*
+    Anidamos un addEventListener al elemento "input", el cual ejecuta una funcion
+    que modifica el subtotal del producto cada vez que se modifica el valor de dicho input.
+    */
 
     const inputCount = div.querySelector("input");
 
@@ -170,7 +179,8 @@ function showCartItems(array){
 
     });
 
-    // AGREGAMOS EL ELEMENTO A HTML
+    // Agregamos el div a HTML
+
     cartItems.appendChild(div);
   }
 
@@ -186,7 +196,7 @@ let cartArray;
 
 let currencyValues;
 
-// Funcion que muestra los elementos del carrito
+// Función que muestra los elementos del carrito
 
 async function showCart() {
 
@@ -197,11 +207,14 @@ async function showCart() {
     showCartItems(cartArray);
   } else {
     cartItems.innerHTML = `<h1 class="mt-5">Actualmente no hay productos en el carrito</h1>`
+    cartControls.classList.add("d-none");
   }
 
 }
 
 showCart();
+
+// Función que devuelve el mensaje de "compra existosa" del JSON
 
 async function buyMessage(url){
 
@@ -224,6 +237,8 @@ async function buyMessage(url){
 
 }
 
+// Función que retorna todos los elementos del carrito (que pertenecen a un usuario)
+
 async function getCart(url){
 
   try {
@@ -243,6 +258,8 @@ async function getCart(url){
   }
 
 }
+
+// Función que toma el cambio entre el dolar y el peso uruguayo
 
 async function getCurrencies(url){
 
@@ -308,6 +325,8 @@ async function modifyCount(url, count){
 
 }
 
+//Función que establece el atributo "bought" de todos los items del carrito de un usuario de 0 a 1 (comprado)
+
 async function putItemsBought(url){
 
   try {
@@ -330,7 +349,7 @@ async function putItemsBought(url){
 
 }
 
-// Funciones para enviar los datos a la tabla de "compras"
+// Función para enviar los datos de la tabla "cart" a la tabla de "purchases" (permite realizar la compra)
 
 async function postPurchase(url, item){
 
@@ -355,15 +374,19 @@ async function postPurchase(url, item){
 
 }
 
+// Agregamos un addEventListener al metodo de envío, el cual actualiza los valores del total e impuestos
 
-shipType.addEventListener("change", () => updateQuantities(cartArray));
+shipType.addEventListener("change", async function(){
+
+  cartArray = await getCart(CART_URL + localStorage.getItem("email"));
+  updateQuantities(cartArray);
+
+});
 
 
 // Entrega 6 - Funcionamiento del form
 
 document.addEventListener('DOMContentLoaded', function () {
-
-
 
 
   // Guardamos en constantes los elementos de HTML que necesitamos para el funcionamiento del form
@@ -378,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const bankTransferFields = document.getElementById("bankTransferFields").getElementsByTagName("input");
 
 
-  // Función que permite realizar la compra (según el método de pago elegido)
+  // Función que permite realizar la compra (según el método de pago elegido), enviando datos a la tabla "purchases"
 
 
   async function makePurchase(url, item){
@@ -452,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-  // Validamos la fecha
+  // Validamos la fecha ingresada por el usuario
 
   function isValidDate(input) {
     
@@ -507,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-  // Funciones que activa los campos de una opcion y desactiva los de la otra, según cual este seleccionada.
+  // Funciones que activan los campos de una opcion y desactivan los de la otra, según cual este seleccionada.
 
   function enableFields(fields){
     for (const field of fields){
@@ -568,9 +591,10 @@ document.addEventListener('DOMContentLoaded', function () {
     form.classList.add("was-validated");
 
 
-
-    // Agregamos un addEventListener al radio buton de tarjeta de credito, que hace que cuando cambie (de chequeado a no chequeado y viceversa)
-    // permite mostrar los mensajes de error de los inputs relacionados con el mismo (en caso de que sean incorrectos)
+    /*
+    Agregamos un addEventListener al radio buton de tarjeta de credito, que hace que cuando cambie (de chequeado a no chequeado y viceversa)
+    permite mostrar los mensajes de error de los inputs relacionados con el mismo (en caso de que sean incorrectos)
+    */
 
     const selectionTextMessage = document.getElementById('selectionText-error');
     const cardNumberMessage = document.getElementById('cardNumber-error');
@@ -606,9 +630,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-
-    // Aquí agregamos otro addEventListener, pero al radio button de transferencia bancaria, el cual realiza lo mismo que la funcion anterior
-    // pero para los inputs relacionados con este
+    /*
+    Aquí agregamos otro addEventListener, pero al radio button de transferencia bancaria,
+    el cual realiza lo mismo que la funcion anterior pero para los inputs relacionados con este
+    */
 
     bankTransfer.addEventListener('change', function(){
 
@@ -637,7 +662,6 @@ document.addEventListener('DOMContentLoaded', function () {
     que muestra un mensaje de error en caso de no ser válidos
     */
     
-
 
     function checkCreditCardNumber(element){
 
@@ -736,9 +760,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     checkBankTransferFields();
 
-
-    // Si la compra es valida (gracias a una funcion que revisa cada campo del form), se muestra un mensaje de realizacion de la misma, ademas de
-    // realizarse un submit del form
+    /*
+    Si la compra es valida (gracias a una funcion que revisa cada campo del form), se
+    muestra un mensaje de realizacion de la misma, ademas de realizarse un submit del form
+    */
 
     if (validatePurchase()){
 
@@ -767,6 +792,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
       setTimeout(function () {
+
+        // Enviamos el form
 
         form.submit();
       
@@ -808,7 +835,6 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
 
       // También observamos cada uno de los campos de la forma de pago en caso de que se haya seleccionado alguna.
-
       // Observamos los campos del radio button "tarjeta de crédito"
 
       selectionTextMessage.hidden = true;
@@ -861,7 +887,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
     
-      // Validamos las cantidades de cada producto en el carrito
+    // Validamos las cantidades de cada producto en el carrito
 
     for (const cartItem of cartItems) {
 
@@ -889,7 +915,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    if (cartArray.length == 0){
+    // Chequeamos que hayan elementos en el carrito, y en caso de que no hayan y se intente comprar, se muestra una alerta
+
+    if (cartArray[0].message != undefined){
 
       const message = document.createElement("div");
       message.innerHTML =

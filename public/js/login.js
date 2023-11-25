@@ -66,7 +66,7 @@ async function setUser (url, user){
     
     try {
         
-        let response = await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -74,7 +74,7 @@ async function setUser (url, user){
             body: JSON.stringify(user)
         });
 
-        let responseContents = await response.json();
+        const responseContents = await response.json();
 
         const signInModal = document.querySelector("#signInModal");
         
@@ -111,13 +111,110 @@ async function setUser (url, user){
 }
 
 
+
+
+
+// Funciones para el manejo del Change Password
+
+const changePasswordForm = document.querySelector("#changePasswordForm");
+const emailChangePassword = document.querySelector("#emailChangePassword");
+const newPassword = document.querySelector("#newPassword");
+const openModalChangePassword = document.querySelector("#openModalChangePassword");
+
+// Función para mostrar y ocultar la contraseña en el change password
+
+const showNewPassword = document.querySelector("#showNewPassword");
+
+showNewPassword.addEventListener("change", function(){
+
+    if (showNewPassword.checked){
+        newPassword.type = "text";
+    } else {
+        newPassword.type = "password";
+    }
+
+});
+
+// Función para modificar la contraseña del usuario
+
+changePasswordForm.addEventListener("submit", function(event){
+
+    if(!changePasswordForm.checkValidity()){
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    changePasswordForm.classList.add("was-validated");
+
+    if (emailChangePassword.checkValidity() && newPassword.checkValidity()){
+        changePassword(LOGIN_URL, {email: emailChangePassword.value, password: newPassword.value});
+    }
+
+    event.preventDefault();
+
+});
+
+// Funcion que modifica la contraseña de la cuenta especificada en la base de datos (vía el método PUT)
+
+async function changePassword(url, user){
+
+    try {
+        
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user)
+        });
+
+        const responseContents = await response.json();
+
+        const changePasswordModal = document.querySelector("#changePassword")
+
+        const message = document.createElement("div");
+
+        if (responseContents.email == undefined){
+
+            message.innerHTML =
+            `<div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+            ${responseContents.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+
+        } else {
+
+            message.innerHTML =
+            `<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+            Has modificado la contraseña exitosamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+
+            setTimeout(() => {
+                location.reload();
+            }, "2000");
+
+        }
+
+        changePasswordModal.appendChild(message);
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+
+
+
+
 // Funciones para el manejo del LOGIN
 
 const loginForm = document.querySelector("#loginForm");
 const email = document.querySelector("#email");
 const password = document.querySelector("#password");
 const sendLogin = document.querySelector("#sendLogin");
-const openModal = document.querySelector("#openModal");
+const openModalSignIn = document.querySelector("#openModalSingIn");
 
 // Función para mostrar y ocultar la contraseña en el login
 
@@ -151,7 +248,8 @@ sendLogin.addEventListener("click", async function(event){
             const token = await getToken(LOGIN_URL + "verify", {email: email.value, password: password.value});
             localStorage.setItem("token", token);
             sendLogin.disabled = true;
-            openModal.disabled = true;
+            openModalSignIn.disabled = true;
+            openModalChangePassword.disabled = true;
             setTimeout(() => {
                 window.location.href = "index.html";
             }, "2000");
@@ -164,9 +262,9 @@ async function searchUser(url){
 
     try {
         
-        let response = await fetch(url);
+        const response = await fetch(url);
 
-        let responseContents = await response.json();
+        const responseContents = await response.json();
 
         const message = document.createElement("div");
 
@@ -210,7 +308,7 @@ async function getToken(url, user){
 
     try {
         
-        let response = await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -218,7 +316,7 @@ async function getToken(url, user){
             body: JSON.stringify(user)
         });
 
-        let responseContents = await response.json();
+        const responseContents = await response.json();
 
         return responseContents.token;
 

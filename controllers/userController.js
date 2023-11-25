@@ -37,6 +37,15 @@ const verifyUser = async (req, res) => {
 
 };
 
+// Manejamos las peticiones PUT
+
+const putUserPassword = async (req, res) => {
+
+    const user = await userModel.putUserPassword(req.body);
+    res.json(user[0]);
+
+}
+
 // Manejamos las peticiones DELETE
 
 const deleteUser = async (req, res) => {
@@ -50,5 +59,6 @@ module.exports = {
     getUserByEmail,
     postUser,
     verifyUser,
+    putUserPassword,
     deleteUser
 }

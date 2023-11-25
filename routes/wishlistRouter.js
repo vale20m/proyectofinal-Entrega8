@@ -1,4 +1,4 @@
-// Colocamos las rutas (o endpoints) sobre los que trabajamos en relacion a la wishlist de cada usuario
+// Colocamos las rutas (o endpoints) donde manejamos la wishlist de cada usuario
 
 const express = require("express");
 const wishlistController = require("../controllers/wishlistController");

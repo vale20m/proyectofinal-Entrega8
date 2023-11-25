@@ -38,7 +38,7 @@ const getItemsByUser = async (user) => {
 
 }
 
-// Funcion que retorna el item del carrito que coincide con el usuario y el producto
+// Funcion que retorna el item del carrito que coincide con el usuario y el producto y no ha sido comprado
 
 const getItemByUserAndProduct = async (user, id) => {
 
@@ -64,6 +64,8 @@ const getItemByUserAndProduct = async (user, id) => {
     return [{message: "Se produjo un error."}];
 
 }
+
+// Funcion que devuelve el valor de id de compra de la última compra
 
 const getIDPurchase = async (user) => {
 
@@ -91,7 +93,7 @@ const getIDPurchase = async (user) => {
 
 }
 
-// Función que retorna el usuario agregado a la base de datos.
+// Función que inserta un item al carrito de la base de datos.
 
 const postItem = async (item) => {
 
@@ -189,9 +191,9 @@ const putItemsBought = async (user) => {
             `UPDATE cart SET bought = 1 WHERE user = ? AND bought = 0`, [user]
         );
         
-        const row = await getItemsByUser(user);
+        const rows = await getItemsByUser(user);
 
-        return row;
+        return rows;
     } catch (error) {
         
     }finally {

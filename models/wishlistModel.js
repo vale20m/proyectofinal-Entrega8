@@ -11,7 +11,7 @@ mariadb.createPool({
 });
 
 
-// Funcion que retorna el elemento de la base de datos que coincide con ese email
+// Función que retorna los items de la base de datos que coinciden con ese usuario
 
 const getItemsByUser = async (user) => {
 
@@ -65,7 +65,7 @@ const getItemByUserAndProduct = async (user, product) => {
 
 }
 
-// Funcion que retorna el item agregado a la wishlist de la base de datos.
+// Función que retorna el item agregado a la wishlist de ese usuario (base de datos)
 
 const postItem = async (item) => {
 
@@ -73,6 +73,8 @@ const postItem = async (item) => {
     try {
         
         conn = await pool.getConnection();
+
+        // Insertamos el elemento en la tabla
 
         const insert = await conn.query(
             `INSERT INTO wishlist (user, product, name, cost, currency, image) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -91,7 +93,7 @@ const postItem = async (item) => {
 
 }
 
-// Funcion que elimina a un item que coincide con el usuario y el id del producto indicado.
+// Función que elimina a un item que coincide con el usuario y el id del producto indicado.
 
 const deleteItem = async (user, product) => {
 
@@ -99,6 +101,8 @@ const deleteItem = async (user, product) => {
     try {
   
         conn = await pool.getConnection();
+
+        // Guardamos el item en una variable
 
         const row = await conn.query(`SELECT * FROM wishlist WHERE user = ? AND product = ?`, [user, product]);
 

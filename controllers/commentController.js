@@ -20,17 +20,7 @@ const postComment = async (req, res) => {
 
 }
 
-// Manejamos las peticiones DELETE
-
-const deleteUser = async (req, res) => {
-
-    const user = await commentModel.deleteUser(req.body);
-    res.json(user[0]);
-
-}
-
 module.exports = {
     getCommentsByProductID,
     postComment,
-    deleteUser
 }

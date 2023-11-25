@@ -52,8 +52,8 @@ const putItem = async (req, res) => {
 
 const putItemsBought = async (req, res) => {
 
-    const item = await cartModel.putItemsBought(req.params.user);
-    res.json(item[0]);
+    const items = await cartModel.putItemsBought(req.params.user);
+    res.json(items);
 
 }
 

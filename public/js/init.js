@@ -51,14 +51,14 @@ let getJSONData = function(url){
 }
 
 
-// CONSTANTES PARA ENTREGA 4 FUNCIONALIDAD 2 (MENU DESPLEGABLE)
+// Constantes para entrega 4 funcionalidad 2 (menu desplegable)
 
 const loginButton = document.querySelector("#loginButton");
 const profile = document.querySelector("#profile");
 const options = document.querySelector("#profile-options");
 const userDropdown = document.querySelector("#userDropdown");
 
-// CAMBIAR ENTRE MODO CLARO Y MODO OSCURO
+// Funciones para cambiar entre modo claro y modo oscuro
 
 const switchMode = document.querySelector("#switchMode");
 const whiteItems1 = document.getElementsByClassName("shadow");
@@ -67,7 +67,9 @@ const cartItemsText = document.querySelectorAll("#cartItems");
 const cartTitleText = document.querySelectorAll("#cartTitle");
 const blackContainer = document.getElementById("black1");
 
-// CAMBIA EL COLOR DEL FONDO DE LA PAGINA ACTUAL
+// Función que cambia el color del fondo de la pagina actual
+
+// Tenemos en cuenta los items blancos de la página
 
 function changeBackground(){
 
@@ -146,29 +148,28 @@ document.addEventListener("DOMContentLoaded", function(){
 
   if(localStorage.getItem("email") == undefined){
 
-      profile.innerHTML = "Redireccionando en 3...";
-      for (let a = 2; a >= 1; a--){
-          setTimeout( () => profile.innerHTML = "Redireccionando en " + a + "...", 2000/a);
-      }
-      setTimeout( () => window.location.replace('login.html'), 3000);
+    profile.innerHTML = "Redireccionando en 3...";
+    for (let a = 2; a >= 1; a--){
+        setTimeout( () => profile.innerHTML = "Redireccionando en " + a + "...", 2000/a);
+    }
+    setTimeout( () => window.location.replace('login.html'), 3000);
 
-      // OCULTAMOS LOS ELEMENTOS DEL MENU DESPLEGABLE Y LE QUITAMOS LA CLASE (PARA RETIRAR LA FLECHA)
+    // Ocultamos los elementos del menu desplegable y le quitamos la clase (para retirar la flecha)
 
-      options.style.display = "none";
-      userDropdown.classList.remove("dropdown-toggle");
+    options.style.display = "none";
+    userDropdown.classList.remove("dropdown-toggle");
 
   } else {
 
-      profile.innerHTML = localStorage.getItem("email");
-      loginButton.addEventListener("click", function(){
-          localStorage.removeItem("email");
-          localStorage.removeItem("token");
-          loginButton.href = "index.html";
-      });
+    profile.innerHTML = localStorage.getItem("email");
+    loginButton.addEventListener("click", function(){
+        localStorage.clear();
+        loginButton.href = "index.html";
+    });
 
-      // LE AGREGAMOS LA CLASE AL MENU DESPLEGABLE
+    // Le agregamos la clase al menu desplegable
 
-      userDropdown.classList.add("dropdown-toggle");
+    userDropdown.classList.add("dropdown-toggle");
 
   }
 

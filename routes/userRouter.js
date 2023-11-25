@@ -10,6 +10,8 @@ userRouter.post("/", userController.postUser);
 
 userRouter.post("/verify", userController.verifyUser);
 
+userRouter.put("/", userController.putUserPassword);
+
 userRouter.delete("/", userController.deleteUser);
 
 module.exports = userRouter;

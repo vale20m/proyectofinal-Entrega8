@@ -11,7 +11,7 @@ mariadb.createPool({
 });
 
 
-// Funcion que retorna el elemento de la base de datos que coincide con ese email
+// Función que retorna el elemento de la tabla de usuarios que coincide con ese email (si la contraseña es correcta)
 
 const getUserByEmail = async (email, password) => {
 
@@ -42,7 +42,7 @@ const getUserByEmail = async (email, password) => {
 
 }
 
-// Funcion que retorna el usuario agregado a la base de datos.
+// Función que retorna el usuario agregado a la tabla de usuarios.
 
 const postUser = async (user) => {
 
@@ -75,7 +75,39 @@ const postUser = async (user) => {
 
 }
 
-// Funcion que elimina a un usuario que coincide con el email indicado.
+// Función que modifica la contraseña de un usuario según su email
+
+const putUserPassword = async (user) => {
+
+    let conn;
+    try {
+  
+        conn = await pool.getConnection();
+
+        // Chequeamos que el usuario exista
+
+        const row = await conn.query(`SELECT * FROM users WHERE email = ?`, [user.email]);
+
+        if (row.length == 0){
+            return [{message: "No existe un usuario con ese email en el sistema."}];
+        }
+
+        // Quitamos el elemento de la tabla
+
+        const modifyPassword = await conn.query(`UPDATE users SET password = ? WHERE email = ?`, [user.password, user.email]);
+    
+        return row;
+
+    } catch(error) {
+    } finally {
+        if (conn) conn.release();
+    }
+
+    return [{message: "Se produjo un error."}];
+
+}
+
+// Función que elimina a un usuario que coincide con el email indicado.
 
 const deleteUser = async (user) => {
 
@@ -120,5 +152,6 @@ const deleteUser = async (user) => {
 module.exports = {
     getUserByEmail,
     postUser,
+    putUserPassword,
     deleteUser
 }
